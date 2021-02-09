@@ -18,10 +18,19 @@
 
 package eu.ess.ics.android.essnotify;
 
+import java.util.List;
+
 import eu.ess.ics.android.essnotify.datamodel.Login;
+import eu.ess.ics.android.essnotify.datamodel.Notification;
+import eu.ess.ics.android.essnotify.datamodel.Service;
+import eu.ess.ics.android.essnotify.datamodel.User;
+import eu.ess.ics.android.essnotify.datamodel.UserNotification;
+import eu.ess.ics.android.essnotify.datamodel.UserService;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 
 /**
@@ -47,4 +56,40 @@ public interface BackendService {
      */
     @POST("/api/v1/users/user/apn-token")
     Call<Void> sendRegistrationToken(String firebaseRegistrationToken);
+
+    /**
+     * Retrieves list of notification services supported by the back-end service,
+     * See {@link eu.ess.ics.android.essnotify.datamodel.UserService}
+     */
+    @GET("/api/v1/users/user/services")
+    Call<List<UserService>> getUserServices();
+
+    /**
+     * Registers or unregisters subscription for a notification service.
+     * @param services A list of {@link Service} objects defining what user wishes to
+     *                 subscribe or unsubscribe to.
+     */
+    @PATCH("/api/v1/users/user/services")
+    Call<Void> setSubscriptions(List<Service> services);
+
+    /**
+     * Retrieves the list of notifications which the user has not actively removed from the
+     * notification list view.
+     */
+    @GET("/api/v1/users/user/notifications")
+    Call<List<UserNotification>> getNotifications();
+
+    /**
+     * Updates the service with information on which notifications the user has read or deleted.
+     */
+    @PATCH("/api/v1/users/user/notifications")
+    Call<Void> setNotifications(List<Notification> notifications);
+
+    /**
+     * Retrieves user profile data, see {@link User}
+     * @return A {@link User} object if call is successful.
+     */
+    @GET("/api/v1/users/user/profile")
+    Call<User> checkUserProfile();
+
 }
