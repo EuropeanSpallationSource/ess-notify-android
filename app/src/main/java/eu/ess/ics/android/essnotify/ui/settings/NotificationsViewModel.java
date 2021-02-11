@@ -1,4 +1,4 @@
-package eu.ess.ics.android.essnotify.ui.notifications;
+package eu.ess.ics.android.essnotify.ui.settings;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

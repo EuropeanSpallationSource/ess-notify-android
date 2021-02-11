@@ -3,17 +3,14 @@
 
     <item
         android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_baseline_filter_list_24"
-        android:title="@string/title_home"/>
+        android:icon="@drawable/ic_baseline_filter_list_24"/>
 
     <item
         android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/ic_baseline_mark_email_read_24"
-        android:title="@string/title_dashboard" />
+        android:icon="@drawable/ic_baseline_mark_email_read_24" />
 
     <item
         android:id="@+id/navigation_notifications"
-        android:icon="@drawable/ic_baseline_delete_24"
-        android:title="@string/title_notifications" />
+        android:icon="@drawable/ic_baseline_settings_24"/>
 
 </menu>

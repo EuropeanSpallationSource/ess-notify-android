@@ -37,11 +37,10 @@ import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-
 public class ServerAPIBase {
 
 	private static ServerAPIBase serverAPI;
-	protected ObjectMapper objectMapper;
+	protected static ObjectMapper objectMapper;
 
 	public static ServerAPIBase getInstance(){
 		if(serverAPI == null){
@@ -50,7 +49,7 @@ public class ServerAPIBase {
 		return serverAPI;
 	}
 
-   public ServerAPIBase() {
+   private ServerAPIBase() {
 	  objectMapper = new ObjectMapper();
 	  objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
    }
@@ -58,15 +57,7 @@ public class ServerAPIBase {
 	public static String getEssToken(Context context) {
 		SharedPreferences sharedPref = context.getSharedPreferences(
 				context.getString(R.string.ess_preferences), Context.MODE_PRIVATE);
-		String userDataSerialized = sharedPref.getString("userData", null);
-		try {
-			JSONObject jsonObject = new JSONObject(userDataSerialized);
-			UserData userData = UserData.fromJsonObject(jsonObject);
-			return userData.getFirebaseToken();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return sharedPref.getString(Constants.ESS_TOKEN, null);
 	}
 
 	public BackendService getBackendService(final Context context, boolean forLogin){
@@ -103,10 +94,12 @@ public class ServerAPIBase {
 				}
 			}).build();
 
+		/*
 		ObjectMapper objectMapper =
 				new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
+		*/
+		
 		Retrofit retrofit = new Retrofit.Builder()
 				.client(okHttpClient)
 				.baseUrl(Constants.ESS_BACKEND_SERVICE)

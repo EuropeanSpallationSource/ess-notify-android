@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "770864240729",
+    "project_id": "ess-ics-software",
+    "storage_bucket": "ess-ics-software.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770864240729:android:6d99c13efdb3374b2a3948",
+        "android_client_info": {
+          "package_name": "eu.ess.ics.android.essnotify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "770864240729-sm8776lma0gjcss813sbkllhou35m6ds.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDksJqMjqiNKvgAUvH-WfwlM8GxwV-E8jA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "770864240729-sm8776lma0gjcss813sbkllhou35m6ds.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

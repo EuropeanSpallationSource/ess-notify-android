@@ -35,7 +35,7 @@ public class BootstrapActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //FirebaseApp fa = FirebaseApp.initializeApp(this);
+        FirebaseApp fa = FirebaseApp.initializeApp(this);
         SharedPreferences sharedPref =
                 getSharedPreferences(getString(R.string.ess_preferences), Context.MODE_PRIVATE);
         String essToken = sharedPref.getString(Constants.ESS_TOKEN, null);

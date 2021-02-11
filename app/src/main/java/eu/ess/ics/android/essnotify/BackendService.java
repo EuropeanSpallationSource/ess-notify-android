@@ -20,6 +20,7 @@ package eu.ess.ics.android.essnotify;
 
 import java.util.List;
 
+import eu.ess.ics.android.essnotify.datamodel.APN;
 import eu.ess.ics.android.essnotify.datamodel.Login;
 import eu.ess.ics.android.essnotify.datamodel.Notification;
 import eu.ess.ics.android.essnotify.datamodel.Service;
@@ -27,6 +28,7 @@ import eu.ess.ics.android.essnotify.datamodel.User;
 import eu.ess.ics.android.essnotify.datamodel.UserNotification;
 import eu.ess.ics.android.essnotify.datamodel.UserService;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -51,11 +53,11 @@ public interface BackendService {
 
     /**
      * Registers or refreshes the Firebase token with service.
-     * @param firebaseRegistrationToken
+     * @param
      * @return
      */
     @POST("/api/v1/users/user/apn-token")
-    Call<Void> sendRegistrationToken(String firebaseRegistrationToken);
+    Call<Void> sendRegistrationToken(@Body APN apn);
 
     /**
      * Retrieves list of notification services supported by the back-end service,

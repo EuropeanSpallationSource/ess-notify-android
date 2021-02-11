@@ -19,8 +19,10 @@
 package eu.ess.ics.android.essnotify;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
+import eu.ess.ics.android.essnotify.datamodel.APN;
 import retrofit2.Call;
 
 public class SendRegistrationToken extends AsyncTask<Void, Void, Void> {
@@ -37,9 +39,13 @@ public class SendRegistrationToken extends AsyncTask<Void, Void, Void> {
     public Void doInBackground(Void... args) {
         BackendService backendService =
                 ServerAPIBase.getInstance().getBackendService(context);
-        Call<Void> call = backendService.sendRegistrationToken(firebaseRegistrationToken);
         try {
-            call.execute();
+            APN apn = new APN();
+            apn.setApn_token(firebaseRegistrationToken);
+            backendService.sendRegistrationToken(apn).execute();
+            SharedPreferences sharedPref =
+                    context.getSharedPreferences(context.getString(R.string.ess_preferences), Context.MODE_PRIVATE);
+            sharedPref.edit().putString(Constants.FIREBASE_REGISTRATION_TOKEN, firebaseRegistrationToken).commit();
         } catch (Exception e) {
            e.printStackTrace();
         }

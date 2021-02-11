@@ -19,10 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="eu.ess.ics.android.essnotify.ui.notifications.NotificationsFragment"
+        android:name="eu.ess.ics.android.essnotify.ui.settings.NotificationsFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_notifications" />
-    <action
-        android:id="@+id/action_mobile_navigation_self"
-        app:popUpTo="@id/mobile_navigation" />
 </navigation>

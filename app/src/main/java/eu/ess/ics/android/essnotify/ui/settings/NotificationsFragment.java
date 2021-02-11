@@ -1,4 +1,4 @@
-package eu.ess.ics.android.essnotify.ui.notifications;
+package eu.ess.ics.android.essnotify.ui.settings;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
