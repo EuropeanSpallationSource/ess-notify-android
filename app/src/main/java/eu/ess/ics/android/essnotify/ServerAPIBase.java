@@ -86,19 +86,15 @@ public class ServerAPIBase {
 						request = builder.build();
 					}
 					else{
+						String essToken = getEssToken(context);
 						request = builder
-								.addHeader("Authorization", "Bearer " + getEssToken(context))
+								.addHeader("Authorization", "Bearer " + essToken)
 								.build();
 					}
 					return chain.proceed(request);
 				}
 			}).build();
 
-		/*
-		ObjectMapper objectMapper =
-				new ObjectMapper();
-		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		*/
 		
 		Retrofit retrofit = new Retrofit.Builder()
 				.client(okHttpClient)

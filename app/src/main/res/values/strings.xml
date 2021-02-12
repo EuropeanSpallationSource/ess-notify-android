@@ -16,4 +16,7 @@
     -->
     <string name="hello_world">Hello Square World!</string>
     <string name="ess_preferences">ESS_Preferences</string>
+
+    <string name="available_services">Available Notification Services</string>
+    <string name="search">Search...</string>
 </resources>
