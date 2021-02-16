@@ -30,6 +30,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:lines="1"
+        android:inputType="text"
         android:background="?attr/colorButtonNormal"
         android:drawableStart="@drawable/ic_baseline_search_24"
         android:drawableLeft="@drawable/ic_baseline_search_24"

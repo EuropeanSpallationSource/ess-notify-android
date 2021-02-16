@@ -18,6 +18,6 @@
   -->
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android" >
-    <size android:width="3dp" />
+    <size android:width="2dp" />
     <solid android:color="@color/ess_light"  />
 </shape>
