@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2021 European Spallation Source ERIC.
   ~
   ~  This program is free software; you can redistribute it and/or
@@ -16,16 +15,28 @@
   ~  along with this program; if not, write to the Free Software
   ~  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical">
+    <data>
+        <variable
+            name="model"
+            type="eu.ess.ics.android.essnotify.datamodel.UserService" />
 
-    <CheckBox
-        android:id="@+id/userServiceSelected"
-        android:layout_width="wrap_content"
+        <variable name="checkListener"
+            type="eu.ess.ics.android.essnotify.ui.settings.SettingsListAdapter"/>
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Some service"
-        android:textColor="@android:color/white"/>
-</FrameLayout>
+        android:gravity="center_vertical">
+
+        <CheckBox
+            android:id="@+id/userServiceSelected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{model.category}"
+            android:onCheckChanged="@{checkListener.onCheckedChanged}"
+            android:textColor="@android:color/white" />
+    </FrameLayout>
+</layout>

@@ -18,35 +18,39 @@
 
 package eu.ess.ics.android.essnotify.ui.settings;
 
-import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.ess.ics.android.essnotify.BackendService;
+import eu.ess.ics.android.essnotify.BR;
 import eu.ess.ics.android.essnotify.R;
-import eu.ess.ics.android.essnotify.ServerAPIBase;
+import eu.ess.ics.android.essnotify.databinding.SettingsServiceItemBinding;
 import eu.ess.ics.android.essnotify.datamodel.UserService;
-import retrofit2.Call;
-import retrofit2.Response;
 
-public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapter.ViewHolder>{
+public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapter.ViewHolder> implements CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = "SettingsListAdapter";
     private List<UserService> userServices;
     private List<UserService> filteredUserServices;
 
-    public SettingsListAdapter(List<UserService> userServices){
-        this.userServices = userServices;
+    public SettingsListAdapter(){
+        // Instantiate with an empty list to avoid NPEs.
+        this.userServices = new ArrayList<>();
         this.filteredUserServices = userServices;
+    }
+
+    public void setServicesList(List<UserService> servicesList){
+        this.userServices = servicesList;
+        this.filteredUserServices = userServices;
+        notifyDataSetChanged();
     }
 
     public void filter(String filterText){
@@ -61,19 +65,20 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        // Create a new view.
-        View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.settings_service_item, viewGroup, false);
-        return new ViewHolder(v);
+    public SettingsListAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+
+        SettingsServiceItemBinding binding = DataBindingUtil.inflate(
+                LayoutInflater.from(viewGroup.getContext()),
+                R.layout.settings_service_item, viewGroup, false);
+
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Log.d(TAG, "Element " + position + " set.");
-        // Get element from your dataset at this position and replace the contents of the view
-        // with that element
-        viewHolder.getCheckBox().setText(filteredUserServices.get(position).getCategory());
+        UserService dataModel = filteredUserServices.get(position);
+        viewHolder.bind(dataModel);
     }
 
     @Override
@@ -83,44 +88,21 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final CheckBox checkBox;
+        private SettingsServiceItemBinding binding;
 
-        public ViewHolder(View v) {
-            super(v);
-            // Define click listener for the ViewHolder's View.
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Log.d(TAG, "Element " + getAdapterPosition() + " clicked.");
-                }
-            });
-            checkBox = v.findViewById(R.id.userServiceSelected);
+        public ViewHolder(SettingsServiceItemBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
-        public CheckBox getCheckBox() {
-            return checkBox;
+        public void bind(Object obj) {
+            binding.setVariable(BR.model, obj);
+            binding.executePendingBindings();
         }
     }
 
-    private class HandleSubscriptionTask extends AsyncTask<Void, Void, List<UserService>> {
-
-        private Context context;
-
-        public HandleSubscriptionTask(Context context){
-            this.context = context;
-        }
-
-        @Override
-        public List<UserService> doInBackground(Void... args) {
-            BackendService backendService =
-                    ServerAPIBase.getInstance().getBackendService(context);
-            Call<List<UserService>> call = backendService.getUserServices();
-            try {
-                Response<List<UserService>> response = call.execute();
-                return response.body();
-            } catch (Exception e) {
-                return null;
-            }
-        }
+    @Override
+    public void onCheckedChanged(CompoundButton checkBox, boolean checked) {
+        Log.d(TAG, "Checked = " + checked);
     }
 }
