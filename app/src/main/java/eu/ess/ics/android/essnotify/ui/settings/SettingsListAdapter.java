@@ -32,10 +32,11 @@ import java.util.List;
 
 import eu.ess.ics.android.essnotify.BR;
 import eu.ess.ics.android.essnotify.R;
-import eu.ess.ics.android.essnotify.databinding.SettingsServiceItemBinding;
+import eu.ess.ics.android.essnotify.databinding.ServiceItemBinding;
 import eu.ess.ics.android.essnotify.datamodel.UserService;
 
-public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapter.ViewHolder> implements CompoundButton.OnCheckedChangeListener {
+public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapter.ViewHolder>
+        implements CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = "SettingsListAdapter";
     private List<UserService> userServices;
@@ -67,9 +68,11 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
     @Override
     public SettingsListAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
-        SettingsServiceItemBinding binding = DataBindingUtil.inflate(
+        ServiceItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(viewGroup.getContext()),
-                R.layout.settings_service_item, viewGroup, false);
+                R.layout.service_item, viewGroup, false);
+
+        binding.userServiceSelected.setOnCheckedChangeListener(this);
 
         return new ViewHolder(binding);
     }
@@ -88,9 +91,9 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private SettingsServiceItemBinding binding;
+        private ServiceItemBinding binding;
 
-        public ViewHolder(SettingsServiceItemBinding binding) {
+        public ViewHolder(ServiceItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
@@ -103,6 +106,7 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
 
     @Override
     public void onCheckedChanged(CompoundButton checkBox, boolean checked) {
+        Log.d(TAG, checkBox.getText().toString());
         Log.d(TAG, "Checked = " + checked);
     }
 }
