@@ -19,4 +19,6 @@
 
     <string name="available_services">Available Notification Services</string>
     <string name="search">Search...</string>
+
+    <string name="ess_notification_channel">ESS Notifications</string>
 </resources>

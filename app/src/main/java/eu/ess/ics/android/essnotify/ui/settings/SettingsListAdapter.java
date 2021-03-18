@@ -18,34 +18,51 @@
 
 package eu.ess.ics.android.essnotify.ui.settings;
 
-import android.util.Log;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import eu.ess.ics.android.essnotify.BR;
+import eu.ess.ics.android.essnotify.BackendService;
 import eu.ess.ics.android.essnotify.R;
+import eu.ess.ics.android.essnotify.ServerAPIBase;
 import eu.ess.ics.android.essnotify.databinding.ServiceItemBinding;
+import eu.ess.ics.android.essnotify.datamodel.Service;
 import eu.ess.ics.android.essnotify.datamodel.UserService;
+import retrofit2.Call;
+import retrofit2.Response;
 
+/**
+ * Adapter for items in the service settings list.
+ */
 public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapter.ViewHolder>
-        implements CompoundButton.OnCheckedChangeListener {
+        implements ServiceItemClickListener {
 
-    private static final String TAG = "SettingsListAdapter";
     private List<UserService> userServices;
     private List<UserService> filteredUserServices;
+    private Context context;
 
     public SettingsListAdapter(){
         // Instantiate with an empty list to avoid NPEs.
         this.userServices = new ArrayList<>();
         this.filteredUserServices = userServices;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        context = recyclerView.getContext();
+        new GetSubscriptionsTask().execute();
     }
 
     public void setServicesList(List<UserService> servicesList){
@@ -71,17 +88,14 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
         ServiceItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(viewGroup.getContext()),
                 R.layout.service_item, viewGroup, false);
-
-        binding.userServiceSelected.setOnCheckedChangeListener(this);
-
         return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        Log.d(TAG, "Element " + position + " set.");
         UserService dataModel = filteredUserServices.get(position);
         viewHolder.bind(dataModel);
+        viewHolder.binding.setItemClickListener(this);
     }
 
     @Override
@@ -105,8 +119,64 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton checkBox, boolean checked) {
-        Log.d(TAG, checkBox.getText().toString());
-        Log.d(TAG, "Checked = " + checked);
+    public void serviceItemClicked(View view, UserService userService){
+        CheckBox checkBox = (CheckBox)view;
+        Service service = new Service();
+        service.setId(userService.getId());
+        service.setIs_subscribed(checkBox.isChecked());
+
+        new SetSubscriptionTask(Arrays.asList(service)).execute();
+    }
+
+    private class GetSubscriptionsTask extends AsyncTask<Void, Void, List<UserService>> {
+
+        @Override
+        public List<UserService> doInBackground(Void... args) {
+            BackendService backendService =
+                    ServerAPIBase.getInstance().getBackendService(context);
+            Call<List<UserService>> call = backendService.getUserServices();
+            try {
+                Response<List<UserService>> response = call.execute();
+                return response.body();
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        public void onPostExecute(List<UserService> userServiceList){
+            if(userServiceList != null) {
+                setServicesList(userServiceList);
+            }
+        }
+    }
+
+    private class SetSubscriptionTask extends AsyncTask<Void, Void, Integer> {
+
+        private List<Service> subscriptions;
+
+        public SetSubscriptionTask(List<Service> subscriptions){
+            this.subscriptions = subscriptions;
+        }
+
+        @Override
+        public Integer doInBackground(Void... args) {
+            BackendService backendService =
+                    ServerAPIBase.getInstance().getBackendService(context);
+            Call<Void> setSubscriptionCall = backendService.setSubscriptions(subscriptions);
+            try {
+                Response<Void> response = setSubscriptionCall.execute();
+                return response.code();
+            } catch (Exception e) {
+                return -1;
+            }
+        }
+
+        @Override
+        public void onPostExecute(Integer httpStatus){
+           if(httpStatus > -1 && httpStatus <= 300){
+               new GetSubscriptionsTask().execute();
+           }
+        }
     }
 }

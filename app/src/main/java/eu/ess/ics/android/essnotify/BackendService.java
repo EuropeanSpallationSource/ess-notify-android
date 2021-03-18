@@ -72,7 +72,7 @@ public interface BackendService {
      *                 subscribe or unsubscribe to.
      */
     @PATCH("/api/v1/users/user/services")
-    Call<Void> setSubscriptions(List<Service> services);
+    Call<Void> setSubscriptions(@Body List<Service> services);
 
     /**
      * Retrieves the list of notifications which the user has not actively removed from the

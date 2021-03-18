@@ -21,6 +21,10 @@
         <variable
             name="model"
             type="eu.ess.ics.android.essnotify.datamodel.UserService" />
+
+        <variable
+            name="itemClickListener"
+            type="eu.ess.ics.android.essnotify.ui.settings.ServiceItemClickListener" />
     </data>
 
     <FrameLayout
@@ -33,6 +37,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{model.category}"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:checked="@{model.is_subscribed}"
+            android:onClick="@{(view) -> itemClickListener.serviceItemClicked(view, model)}"/>
     </FrameLayout>
 </layout>
