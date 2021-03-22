@@ -21,4 +21,7 @@
     <string name="search">Search...</string>
 
     <string name="ess_notification_channel">ESS Notifications</string>
+
+    <string name="action_delete_message">Delete</string>
+    <string name="action_filter_message">Filter</string>
 </resources>

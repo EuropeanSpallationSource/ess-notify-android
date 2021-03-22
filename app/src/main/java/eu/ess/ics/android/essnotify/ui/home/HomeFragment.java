@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -31,5 +32,24 @@ public class HomeFragment extends Fragment {
             }
         });
         return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Toolbar toolbar = (Toolbar)view.findViewById(R.id.messageToolbar);
+        toolbar.inflateMenu(R.menu.home_toolbar_menu);
+
+        toolbar.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_delete_messages:
+                    // Launch dialog to confirm deletion of all messages
+                    return true;
+                case R.id.action_filter_messages:
+                    // Launch dialog to filter messages
+                    return true;
+                default:
+                    return false;
+            }
+        });
     }
 }
