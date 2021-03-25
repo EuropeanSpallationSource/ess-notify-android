@@ -1,10 +1,8 @@
-package eu.ess.ics.android.essnotify.ui.home;
+package eu.ess.ics.android.essnotify.ui.messages;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
-import eu.ess.ics.android.essnotify.R;
 
 public class HomeViewModel extends ViewModel {
 

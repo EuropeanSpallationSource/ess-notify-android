@@ -17,7 +17,7 @@ import eu.ess.ics.android.essnotify.databinding.FragmentSettingsBinding;
 public class SettingsFragment extends Fragment {
 
     protected SettingsListAdapter adapter;
-    FragmentSettingsBinding binding;
+    private FragmentSettingsBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {

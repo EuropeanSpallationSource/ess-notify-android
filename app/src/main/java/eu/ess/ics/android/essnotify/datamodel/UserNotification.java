@@ -18,6 +18,11 @@
 
 package eu.ess.ics.android.essnotify.datamodel;
 
+import java.text.ParseException;
+import java.util.Date;
+
+import eu.ess.ics.android.essnotify.Constants;
+
 /**
  * Holds data describing a notification.
  */
@@ -85,5 +90,14 @@ public class UserNotification {
 
     public void setIs_read(boolean is_read) {
         this.is_read = is_read;
+    }
+
+    public static String formatDate(String originalDate){
+        try {
+            Date date = Constants.ORIGINAL_DATE_FORMAT.parse(originalDate);
+            return Constants.DATE_FORMAT.format(date);
+        } catch (Exception e) {
+            return originalDate;
+        }
     }
 }

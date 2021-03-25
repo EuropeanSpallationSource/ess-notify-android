@@ -18,6 +18,9 @@
 
 package eu.ess.ics.android.essnotify;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 public class Constants {
 
     /**
@@ -34,4 +37,11 @@ public class Constants {
      * URL for ESS back-end service
      */
     public static final String ESS_BACKEND_SERVICE = "https://notify.esss.lu.se";
+
+    public static final SimpleDateFormat ORIGINAL_DATE_FORMAT =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+
+    public static final SimpleDateFormat DATE_FORMAT =
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 }

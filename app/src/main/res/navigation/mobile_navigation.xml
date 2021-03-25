@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="eu.ess.ics.android.essnotify.ui.home.HomeFragment"
+        android:name="eu.ess.ics.android.essnotify.ui.messages.MessagesFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_messages" />
 
     <fragment
         android:id="@+id/navigation_notifications"
