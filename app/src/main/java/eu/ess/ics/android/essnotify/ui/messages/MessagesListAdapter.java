@@ -21,27 +21,20 @@ package eu.ess.ics.android.essnotify.ui.messages;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import eu.ess.ics.android.essnotify.BR;
 import eu.ess.ics.android.essnotify.BackendService;
 import eu.ess.ics.android.essnotify.R;
 import eu.ess.ics.android.essnotify.ServerAPIBase;
-import eu.ess.ics.android.essnotify.databinding.ServiceItemBinding;
 import eu.ess.ics.android.essnotify.databinding.UserNotificationItemBinding;
-import eu.ess.ics.android.essnotify.datamodel.Service;
 import eu.ess.ics.android.essnotify.datamodel.UserNotification;
-import eu.ess.ics.android.essnotify.datamodel.UserService;
-import eu.ess.ics.android.essnotify.ui.settings.ServiceItemClickListener;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -52,17 +45,27 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
 
     private List<UserNotification> userNotifications;
     private Context context;
+    private List<MessageRefreshCompletionListener> refreshCompleteionListeners
+            = new ArrayList<>();
 
     public MessagesListAdapter() {
         // Instantiate with an empty list to avoid NPEs.
         this.userNotifications = new ArrayList<>();
     }
 
+    public void addRefreshCompletionListener(MessageRefreshCompletionListener messageRefreshCompletionListener){
+        refreshCompleteionListeners.add(messageRefreshCompletionListener);
+    }
+
+    public void removeRefreshCompletionListener(MessageRefreshCompletionListener messageRefreshCompletionListener){
+        refreshCompleteionListeners.remove(messageRefreshCompletionListener);
+    }
+
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         context = recyclerView.getContext();
-        new GetMessagesTask().execute();
+        refresh();
     }
 
     public void setServicesList(List<UserNotification> servicesList) {
@@ -106,6 +109,10 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         }
     }
 
+    public void refresh(){
+        new GetMessagesTask().execute();
+    }
+
     private class GetMessagesTask extends AsyncTask<Void, Void, List<UserNotification>> {
 
         @Override
@@ -123,11 +130,11 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
 
         @Override
         public void onPostExecute(List<UserNotification> userServiceList) {
+            refreshCompleteionListeners.stream().forEach(MessageRefreshCompletionListener::messagesRefreshed);
             if (userServiceList != null) {
                 userServiceList.sort((u1, u2) -> u2.getTimestamp().compareTo(u1.getTimestamp()));
                 setServicesList(userServiceList);
-            }
-            else{
+            } else {
                 // TODO: if list cannot be retrieved, UI should show some error message.
             }
         }

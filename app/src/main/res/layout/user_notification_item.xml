@@ -86,6 +86,7 @@
                     android:layout_width="12dp"
                     android:layout_height="12dp"
                     android:layout_gravity="center"
+                    android:layout_marginTop="1dp"
                     android:layout_marginEnd="5dp"
                     android:visibility="@{notification.is_read ? View.GONE : View.VISIBLE}"
                     app:srcCompat="@drawable/ic_baseline_notification_unread_24" />
