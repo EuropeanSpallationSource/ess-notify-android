@@ -19,6 +19,8 @@
 package eu.ess.ics.android.essnotify.ui.messages;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -41,7 +43,8 @@ import retrofit2.Response;
 /**
  * Adapter for items in the service settings list.
  */
-public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapter.ViewHolder> {
+public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapter.ViewHolder>
+    implements MessageItemClickListener{
 
     private List<UserNotification> userNotifications;
     private Context context;
@@ -86,7 +89,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         UserNotification dataModel = userNotifications.get(position);
         viewHolder.bind(dataModel);
-        //viewHolder.binding.setItemClickListener(this);
+        viewHolder.binding.setItemClickListener(this);
     }
 
     @Override
@@ -138,5 +141,20 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
                 // TODO: if list cannot be retrieved, UI should show some error message.
             }
         }
+    }
+
+    @Override
+    public void linkClicked(UserNotification userNotification){
+        String url = userNotification.getUrl();
+        if(url == null || url.isEmpty()){
+            return;
+        }
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        context.startActivity(browserIntent);
+    }
+
+    @Override
+    public void messageClicked(){
+
     }
 }

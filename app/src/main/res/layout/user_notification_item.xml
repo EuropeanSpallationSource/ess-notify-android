@@ -28,6 +28,10 @@
             name="notification"
             type="eu.ess.ics.android.essnotify.datamodel.UserNotification" />
 
+        <variable
+            name="itemClickListener"
+            type="eu.ess.ics.android.essnotify.ui.messages.MessageItemClickListener" />
+
     </data>
 
     <LinearLayout
@@ -61,8 +65,10 @@
                 android:id="@+id/linkIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:clickable="true"
                 android:visibility="@{notification.url.empty ? View.GONE : View.VISIBLE}"
-                app:srcCompat="@drawable/ic_baseline_insert_link_24" />
+                app:srcCompat="@drawable/ic_baseline_insert_link_24"
+                android:onClick="@{(view) -> itemClickListener.linkClicked(notification)}"/>
 
 
         </LinearLayout>
