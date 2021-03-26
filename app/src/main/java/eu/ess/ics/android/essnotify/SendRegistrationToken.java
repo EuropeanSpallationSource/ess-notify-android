@@ -23,7 +23,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import eu.ess.ics.android.essnotify.datamodel.APN;
-import retrofit2.Call;
+import eu.ess.ics.android.essnotify.backend.BackendService;
 
 public class SendRegistrationToken extends AsyncTask<Void, Void, Void> {
 

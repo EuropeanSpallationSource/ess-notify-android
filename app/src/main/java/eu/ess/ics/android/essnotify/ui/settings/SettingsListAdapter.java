@@ -31,11 +31,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import eu.ess.ics.android.essnotify.BR;
-import eu.ess.ics.android.essnotify.BackendService;
+import eu.ess.ics.android.essnotify.backend.BackendService;
 import eu.ess.ics.android.essnotify.R;
 import eu.ess.ics.android.essnotify.ServerAPIBase;
+import eu.ess.ics.android.essnotify.backend.GetSubscriptionsTask;
 import eu.ess.ics.android.essnotify.databinding.ServiceItemBinding;
 import eu.ess.ics.android.essnotify.datamodel.Service;
 import eu.ess.ics.android.essnotify.datamodel.UserService;
@@ -62,7 +64,16 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         context = recyclerView.getContext();
-        new GetSubscriptionsTask().execute();
+        //new GetSubscriptionsTask().execute(context);
+        try {
+            List<UserService> userServiceList =
+                    new GetSubscriptionsTask().execute(context).get();
+            if(userServiceList != null) {
+                setServicesList(userServiceList);
+            }
+        } catch (Exception e) {
+            // TODO: probably nothing.
+        }
     }
 
     public void setServicesList(List<UserService> servicesList){
@@ -128,29 +139,6 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
         new SetSubscriptionTask(Arrays.asList(service)).execute();
     }
 
-    private class GetSubscriptionsTask extends AsyncTask<Void, Void, List<UserService>> {
-
-        @Override
-        public List<UserService> doInBackground(Void... args) {
-            BackendService backendService =
-                    ServerAPIBase.getInstance().getBackendService(context);
-            Call<List<UserService>> call = backendService.getUserServices();
-            try {
-                Response<List<UserService>> response = call.execute();
-                return response.body();
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
-        @Override
-        public void onPostExecute(List<UserService> userServiceList){
-            if(userServiceList != null) {
-                setServicesList(userServiceList);
-            }
-        }
-    }
-
     private class SetSubscriptionTask extends AsyncTask<Void, Void, Integer> {
 
         private List<Service> subscriptions;
@@ -175,7 +163,15 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
         @Override
         public void onPostExecute(Integer httpStatus){
            if(httpStatus > -1 && httpStatus <= 300){
-               new GetSubscriptionsTask().execute();
+               try {
+                   List<UserService> userServiceList =
+                           new GetSubscriptionsTask().execute(context).get();
+                   if(userServiceList != null) {
+                       setServicesList(userServiceList);
+                   }
+               } catch (Exception e) {
+                   // TODO: probably nothing.
+               }
            }
         }
     }

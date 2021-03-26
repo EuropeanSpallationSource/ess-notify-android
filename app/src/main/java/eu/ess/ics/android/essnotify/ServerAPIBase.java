@@ -23,13 +23,10 @@ import android.content.SharedPreferences;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import eu.ess.ics.android.essnotify.datamodel.UserData;
+import eu.ess.ics.android.essnotify.backend.BackendService;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

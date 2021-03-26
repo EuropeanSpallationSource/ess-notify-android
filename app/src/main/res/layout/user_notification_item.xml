@@ -23,6 +23,7 @@
 
     <data>
         <import type="android.view.View"/>
+        <import type="java.util.Map"/>
         <import type="eu.ess.ics.android.essnotify.datamodel.UserNotification"/>
         <variable
             name="notification"
@@ -31,6 +32,8 @@
         <variable
             name="itemClickListener"
             type="eu.ess.ics.android.essnotify.ui.messages.MessageItemClickListener" />
+
+        <variable name="userServiceNames" type="Map&lt;String, String>" />
 
     </data>
 
@@ -56,7 +59,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@{notification.service_id}"
+                android:text="@{userServiceNames[notification.service_id]}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/white"
                 android:textSize="17sp" />

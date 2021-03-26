@@ -32,6 +32,7 @@ import android.widget.Button;
 import com.google.android.material.textfield.TextInputEditText;
 
 import eu.ess.ics.android.essnotify.datamodel.Login;
+import eu.ess.ics.android.essnotify.backend.BackendService;
 import retrofit2.Call;
 
 public class LoginActivity extends AppCompatActivity {

@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package eu.ess.ics.android.essnotify;
+package eu.ess.ics.android.essnotify.backend;
 
 import java.util.List;
 

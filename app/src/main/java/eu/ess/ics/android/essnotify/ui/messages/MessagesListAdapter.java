@@ -29,14 +29,19 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import eu.ess.ics.android.essnotify.BR;
-import eu.ess.ics.android.essnotify.BackendService;
+import eu.ess.ics.android.essnotify.backend.BackendService;
 import eu.ess.ics.android.essnotify.R;
 import eu.ess.ics.android.essnotify.ServerAPIBase;
+import eu.ess.ics.android.essnotify.backend.GetSubscriptionsTask;
 import eu.ess.ics.android.essnotify.databinding.UserNotificationItemBinding;
 import eu.ess.ics.android.essnotify.datamodel.UserNotification;
+import eu.ess.ics.android.essnotify.datamodel.UserService;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -50,6 +55,9 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     private Context context;
     private List<MessageRefreshCompletionListener> refreshCompleteionListeners
             = new ArrayList<>();
+
+    private List<UserService> userServiceList;
+    private Map<String, String> userServiceNames;
 
     public MessagesListAdapter() {
         // Instantiate with an empty list to avoid NPEs.
@@ -89,6 +97,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         UserNotification dataModel = userNotifications.get(position);
         viewHolder.bind(dataModel);
+        viewHolder.binding.setUserServiceNames(userServiceNames);
         viewHolder.binding.setItemClickListener(this);
     }
 
@@ -112,8 +121,24 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         }
     }
 
+    /**
+     * First retrieves list if {@link UserService} such that service id can be mapped to
+     * service name. Once completed the list of messages is retrieved.
+     */
     public void refresh(){
-        new GetMessagesTask().execute();
+        try {
+            userServiceList = new GetSubscriptionsTask().execute(context).get();
+            userServiceNames = mapServiceId2ServiceName(userServiceList);
+            new GetMessagesTask().execute();
+        } catch (Exception e) {
+            // TODO: nothing? Or show error?
+        }
+    }
+
+    private Map<String, String> mapServiceId2ServiceName(List<UserService> userServiceList){
+        Map<String, String> map = new HashMap<>();
+        userServiceList.stream().forEach(userService -> map.put(userService.getId(), userService.getCategory()));
+        return map;
     }
 
     private class GetMessagesTask extends AsyncTask<Void, Void, List<UserNotification>> {
@@ -133,13 +158,13 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
 
         @Override
         public void onPostExecute(List<UserNotification> userServiceList) {
-            refreshCompleteionListeners.stream().forEach(MessageRefreshCompletionListener::messagesRefreshed);
             if (userServiceList != null) {
                 userServiceList.sort((u1, u2) -> u2.getTimestamp().compareTo(u1.getTimestamp()));
                 setServicesList(userServiceList);
             } else {
                 // TODO: if list cannot be retrieved, UI should show some error message.
             }
+            refreshCompleteionListeners.stream().forEach(MessageRefreshCompletionListener::messagesRefreshed);
         }
     }
 
