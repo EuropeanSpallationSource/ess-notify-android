@@ -85,7 +85,7 @@ public interface BackendService {
      * Updates the service with information on which notifications the user has read or deleted.
      */
     @PATCH("/api/v1/users/user/notifications")
-    Call<Void> setNotifications(List<Notification> notifications);
+    Call<Void> setNotifications(@Body List<Notification> notifications);
 
     /**
      * Retrieves user profile data, see {@link User}

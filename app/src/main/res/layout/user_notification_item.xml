@@ -40,7 +40,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -54,6 +53,15 @@
             android:paddingBottom="5dp">
 
 
+            <ImageView
+                android:id="@+id/linkIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:onClick="@{(view) -> itemClickListener.linkClicked(notification)}"
+                android:visibility="@{notification.url.empty ? View.GONE : View.VISIBLE}"
+                app:srcCompat="@drawable/ic_baseline_insert_link_24" />
+
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="0dp"
@@ -64,15 +72,6 @@
                 android:textColor="@color/white"
                 android:textSize="17sp" />
 
-            <ImageView
-                android:id="@+id/linkIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:visibility="@{notification.url.empty ? View.GONE : View.VISIBLE}"
-                app:srcCompat="@drawable/ic_baseline_insert_link_24"
-                android:onClick="@{(view) -> itemClickListener.linkClicked(notification)}"/>
-
 
         </LinearLayout>
 
@@ -80,6 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/ess_light"
+            android:onClick="@{(view) -> itemClickListener.messageClicked(view, notification)}"
             android:orientation="vertical"
             android:paddingStart="12dp"
             android:paddingEnd="12dp">
@@ -97,7 +97,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="1dp"
                     android:layout_marginEnd="5dp"
-                    android:visibility="@{notification.is_read ? View.GONE : View.VISIBLE}"
+                    android:visibility="@{notification.visibility}"
                     app:srcCompat="@drawable/ic_baseline_notification_unread_24" />
 
                 <TextView

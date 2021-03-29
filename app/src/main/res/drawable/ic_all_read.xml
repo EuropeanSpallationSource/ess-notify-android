@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2021 European Spallation Source ERIC.
   ~
@@ -17,21 +16,10 @@
   ~  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <item android:id="@+id/action_mark_all_as_read"
-        android:title="@string/action_mark_all_as_read"
-        android:icon="@drawable/ic_baseline_mark_email_read_24"
-        app:showAsAction="ifRoom"/>
-
-    <item android:id="@+id/action_delete_messages"
-        android:title="@string/action_delete_message"
-        android:icon="@drawable/ic_notify_trash"
-        app:showAsAction="ifRoom"/>
-
-    <!--item android:id="@+id/action_filter_messages"
-        android:title="@string/action_filter_message"
-        android:icon="@drawable/ic_baseline_filter_list_24"
-        app:showAsAction="ifRoom"/-->
-</menu>
+<vector android:height="24dp" android:viewportHeight="560"
+    android:viewportWidth="560" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#fff" android:pathData="M510,289.4V508.89L386.26,385.12 489.88,281.5 280,71.65 70.19,281.5 174.42,385.74l-15.31,15.31L159,401 50,510V289.25c0,-8.71 -0.19,-18 4.89,-23.06L264.72,56.34a21.66,21.66 0,0 1,30.62 0L505.19,266.19C510.05,271.05 510,283.38 510,289.4Z"/>
+    <path android:fillColor="#fff" android:pathData="M295.34,56.34 L505.19,266.19c4.86,4.86 4.83,17.19 4.83,23.21"/>
+    <path android:fillColor="#fff" android:pathData="M505.19,266.19c4.86,4.86 4.83,7.21 4.83,23.21"/>
+    <path android:fillColor="#fff" android:pathData="M492.27,510 L285.4,303.12a6.9,6.9 0,0 0,-9.74 0L68.79,510Z"/>
+</vector>

@@ -22,6 +22,10 @@
 
     <string name="ess_notification_channel">ESS Notifications</string>
 
+    <string name="action_mark_all_as_read">Mark As Read</string>
     <string name="action_delete_message">Delete</string>
     <string name="action_filter_message">Filter</string>
+
+    <string name="navigation_home">Home</string>
+    <string name="navigation_settings">Settings</string>
 </resources>

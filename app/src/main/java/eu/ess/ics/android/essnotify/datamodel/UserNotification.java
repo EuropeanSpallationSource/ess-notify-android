@@ -18,15 +18,27 @@
 
 package eu.ess.ics.android.essnotify.datamodel;
 
+import android.view.View;
+
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
+import androidx.databinding.Observable;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableInt;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.text.ParseException;
 import java.util.Date;
 
+import eu.ess.ics.android.essnotify.BR;
 import eu.ess.ics.android.essnotify.Constants;
 
 /**
  * Holds data describing a notification.
  */
-public class UserNotification {
+
+public class UserNotification extends BaseObservable {
 
     private int id;
     private String title;
@@ -35,6 +47,19 @@ public class UserNotification {
     private String timestamp;
     private String service_id;
     private boolean is_read;
+    private int visibility;
+
+    @Bindable
+    @JsonIgnore
+    public int getVisibility(){
+        return visibility;
+    }
+
+    @JsonIgnore
+    public void setVisibility(int visibility){
+        this.visibility = visibility;
+        notifyPropertyChanged(BR.visibility);
+    }
 
     public int getId() {
         return id;
@@ -90,6 +115,8 @@ public class UserNotification {
 
     public void setIs_read(boolean is_read) {
         this.is_read = is_read;
+        this.visibility = is_read ? View.GONE : View.VISIBLE;
+        notifyPropertyChanged(BR.visibility);
     }
 
     public static String formatDate(String originalDate){

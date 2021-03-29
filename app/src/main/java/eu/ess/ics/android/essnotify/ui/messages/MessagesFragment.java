@@ -49,9 +49,11 @@ public class MessagesFragment extends Fragment implements MessageRefreshCompleti
                 case R.id.action_delete_messages:
                     // Launch dialog to confirm deletion of all messages
                     return true;
-                case R.id.action_filter_messages:
+                //case R.id.action_filter_messages:
                     // Launch dialog to filter messages
-                    return true;
+                //    return true;
+                case R.id.action_mark_all_as_read:
+                    messagesListAdapter.markAllAsRead();
                 default:
                     return false;
             }

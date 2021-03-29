@@ -18,11 +18,13 @@
 
 package eu.ess.ics.android.essnotify.ui.messages;
 
+import android.view.View;
+
 import eu.ess.ics.android.essnotify.datamodel.UserNotification;
 
 public interface MessageItemClickListener {
 
     void linkClicked(UserNotification userNotification);
 
-    void messageClicked();
+    void messageClicked(View view, UserNotification userNotification);
 }

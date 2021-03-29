@@ -23,16 +23,19 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import eu.ess.ics.android.essnotify.BR;
 import eu.ess.ics.android.essnotify.backend.BackendService;
@@ -40,6 +43,7 @@ import eu.ess.ics.android.essnotify.R;
 import eu.ess.ics.android.essnotify.ServerAPIBase;
 import eu.ess.ics.android.essnotify.backend.GetSubscriptionsTask;
 import eu.ess.ics.android.essnotify.databinding.UserNotificationItemBinding;
+import eu.ess.ics.android.essnotify.datamodel.Notification;
 import eu.ess.ics.android.essnotify.datamodel.UserNotification;
 import eu.ess.ics.android.essnotify.datamodel.UserService;
 import retrofit2.Call;
@@ -179,7 +183,42 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     }
 
     @Override
-    public void messageClicked(){
+    public void messageClicked(View view, UserNotification userNotification){
+        markAsRead(Arrays.asList(userNotification));
+    }
 
+    private class SetMessagesTask extends AsyncTask<List<Notification>, Void, Boolean>{
+        @Override
+        public Boolean doInBackground(List<Notification>... notifications) {
+            BackendService backendService =
+                    ServerAPIBase.getInstance().getBackendService(context);
+            Call<Void> call = backendService.setNotifications(notifications[0]);
+            try {
+                call.execute();
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+    }
+
+    public void deleteAll(){
+
+    }
+
+    public void markAllAsRead(){
+        markAsRead(userNotifications);
+    }
+
+    private void markAsRead(List<UserNotification> userNotifications){
+        List<Notification> notifications =
+                userNotifications.stream().map(un -> new Notification(un)).collect(Collectors.toList());
+        try {
+            if(new SetMessagesTask().execute(notifications).get()){
+                userNotifications.stream().forEach(un -> un.setIs_read(true));
+            }
+        } catch (Exception e) {
+            // TODO: Handle failure
+        }
     }
 }
