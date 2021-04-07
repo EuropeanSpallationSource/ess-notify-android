@@ -18,14 +18,14 @@
 
 package eu.ess.ics.android.essnotify.datamodel;
 
-public class APN {
-    private String apn_token;
+public class DeviceToken {
+    private String device_token;
 
-    public String getApn_token() {
-        return apn_token;
+    public String getDevice_token() {
+        return device_token;
     }
 
-    public void setApn_token(String apn_token) {
-        this.apn_token = apn_token;
+    public void setDevice_token(String device_token) {
+        this.device_token = device_token;
     }
 }

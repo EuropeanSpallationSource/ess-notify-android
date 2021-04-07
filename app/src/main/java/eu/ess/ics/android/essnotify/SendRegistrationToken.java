@@ -22,7 +22,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
-import eu.ess.ics.android.essnotify.datamodel.APN;
+import eu.ess.ics.android.essnotify.datamodel.DeviceToken;
 import eu.ess.ics.android.essnotify.backend.BackendService;
 
 public class SendRegistrationToken extends AsyncTask<Void, Void, Void> {
@@ -40,9 +40,9 @@ public class SendRegistrationToken extends AsyncTask<Void, Void, Void> {
         BackendService backendService =
                 ServerAPIBase.getInstance().getBackendService(context);
         try {
-            APN apn = new APN();
-            apn.setApn_token(firebaseRegistrationToken);
-            backendService.sendRegistrationToken(apn).execute();
+            DeviceToken deviceToken = new DeviceToken();
+            deviceToken.setDevice_token(firebaseRegistrationToken);
+            backendService.sendRegistrationToken(deviceToken).execute();
             SharedPreferences sharedPref =
                     context.getSharedPreferences(context.getString(R.string.ess_preferences), Context.MODE_PRIVATE);
             sharedPref.edit().putString(Constants.FIREBASE_REGISTRATION_TOKEN, firebaseRegistrationToken).commit();

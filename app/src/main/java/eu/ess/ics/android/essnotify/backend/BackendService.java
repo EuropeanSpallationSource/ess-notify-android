@@ -20,7 +20,7 @@ package eu.ess.ics.android.essnotify.backend;
 
 import java.util.List;
 
-import eu.ess.ics.android.essnotify.datamodel.APN;
+import eu.ess.ics.android.essnotify.datamodel.DeviceToken;
 import eu.ess.ics.android.essnotify.datamodel.Login;
 import eu.ess.ics.android.essnotify.datamodel.Notification;
 import eu.ess.ics.android.essnotify.datamodel.Service;
@@ -48,7 +48,7 @@ public interface BackendService {
      * Client code will need to handle failures accordingly.
      */
     @FormUrlEncoded
-    @POST("/api/v1/login")
+    @POST("/api/v2/login")
     Call<Login> login(@Field("username") String username, @Field("password") String password);
 
     /**
@@ -56,14 +56,14 @@ public interface BackendService {
      * @param
      * @return
      */
-    @POST("/api/v1/users/user/apn-token")
-    Call<Void> sendRegistrationToken(@Body APN apn);
+    @POST("/api/v2/users/user/device-token")
+    Call<Void> sendRegistrationToken(@Body DeviceToken deviceToken);
 
     /**
      * Retrieves list of notification services supported by the back-end service,
      * See {@link eu.ess.ics.android.essnotify.datamodel.UserService}
      */
-    @GET("/api/v1/users/user/services")
+    @GET("/api/v2/users/user/services")
     Call<List<UserService>> getUserServices();
 
     /**
@@ -71,27 +71,27 @@ public interface BackendService {
      * @param services A list of {@link Service} objects defining what user wishes to
      *                 subscribe or unsubscribe to.
      */
-    @PATCH("/api/v1/users/user/services")
+    @PATCH("/api/v2/users/user/services")
     Call<Void> setSubscriptions(@Body List<Service> services);
 
     /**
      * Retrieves the list of notifications which the user has not actively removed from the
      * notification list view.
      */
-    @GET("/api/v1/users/user/notifications")
+    @GET("/api/v2/users/user/notifications")
     Call<List<UserNotification>> getNotifications();
 
     /**
      * Updates the service with information on which notifications the user has read or deleted.
      */
-    @PATCH("/api/v1/users/user/notifications")
+    @PATCH("/api/v2/users/user/notifications")
     Call<Void> setNotifications(@Body List<Notification> notifications);
 
     /**
      * Retrieves user profile data, see {@link User}
      * @return A {@link User} object if call is successful.
      */
-    @GET("/api/v1/users/user/profile")
+    @GET("/api/v2/users/user/profile")
     Call<User> checkUserProfile();
 
 }
