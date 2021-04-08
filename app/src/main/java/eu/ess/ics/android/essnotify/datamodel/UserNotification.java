@@ -29,7 +29,10 @@ import androidx.databinding.ObservableInt;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.TimeZone;
 
 import eu.ess.ics.android.essnotify.BR;
 import eu.ess.ics.android.essnotify.Constants;
@@ -121,7 +124,11 @@ public class UserNotification extends BaseObservable {
 
     public static String formatDate(String originalDate){
         try {
-            Date date = Constants.ORIGINAL_DATE_FORMAT.parse(originalDate);
+            SimpleDateFormat simpleDateFormat = Constants.ORIGINAL_DATE_FORMAT;
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date date = simpleDateFormat.parse(originalDate);
+            TimeZone tz = TimeZone.getDefault();
+            simpleDateFormat.setTimeZone(tz);
             return Constants.DATE_FORMAT.format(date);
         } catch (Exception e) {
             return originalDate;

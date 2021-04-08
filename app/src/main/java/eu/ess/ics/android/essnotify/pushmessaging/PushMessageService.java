@@ -36,6 +36,8 @@ import eu.ess.ics.android.essnotify.R;
 
 public class PushMessageService extends FirebaseMessagingService {
 
+    public static final String NEW_NOTIFICATION = "NEW_NOTIFICATION";
+
     /**
      * Called when message is received.
      *
@@ -78,5 +80,8 @@ public class PushMessageService extends FirebaseMessagingService {
                 NotificationManagerCompat.from(this);
 
         notificationManager.notify(1, notification);
+
+        Intent broadcastIntent = new Intent(NEW_NOTIFICATION);
+        sendBroadcast(broadcastIntent);
     }
 }

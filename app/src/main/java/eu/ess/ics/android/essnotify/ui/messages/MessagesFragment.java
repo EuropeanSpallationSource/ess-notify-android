@@ -1,5 +1,9 @@
 package eu.ess.ics.android.essnotify.ui.messages;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +17,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import eu.ess.ics.android.essnotify.R;
 import eu.ess.ics.android.essnotify.databinding.FragmentMessagesBinding;
+import eu.ess.ics.android.essnotify.pushmessaging.PushMessageService;
 
 public class MessagesFragment extends Fragment implements MessageRefreshCompletionListener{
 
@@ -20,6 +25,30 @@ public class MessagesFragment extends Fragment implements MessageRefreshCompleti
     private SwipeRefreshLayout swipeRefreshLayout;
     private MessagesListAdapter messagesListAdapter;
 
+    /**
+     * {@link BroadcastReceiver} handling broadcast when {@link eu.ess.ics.android.essnotify.pushmessaging.PushMessageService}
+     * receives notification. The idea is to update the list of messages in response to notifications.
+     */
+    private BroadcastReceiver myReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            messagesListAdapter.refresh();
+        }
+    };
+
+    @Override
+    public void onCreate(Bundle bundle){
+        super.onCreate(bundle);
+        getActivity().registerReceiver(myReceiver, new IntentFilter(PushMessageService.NEW_NOTIFICATION));
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        getActivity().unregisterReceiver(myReceiver);
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -64,4 +93,6 @@ public class MessagesFragment extends Fragment implements MessageRefreshCompleti
     public void messagesRefreshed(){
         swipeRefreshLayout.setRefreshing(false);
     }
+
+
 }
