@@ -26,9 +26,9 @@ public class Notification {
     private int id;
     private String status;
 
-    public Notification(UserNotification userNotification){
+    public Notification(UserNotification userNotification, String status){
         this.id = userNotification.getId();
-        this.setStatus(userNotification.isIs_read() ? "read" : "unread");
+        this.setStatus(status);
     }
 
     public int getId() {

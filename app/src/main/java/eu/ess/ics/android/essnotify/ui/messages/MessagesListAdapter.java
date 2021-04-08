@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -80,7 +81,14 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         context = recyclerView.getContext();
+        ItemTouchHelper itemTouchHelper = new
+                ItemTouchHelper(new SwipeToDeleteCallback(this));
+        itemTouchHelper.attachToRecyclerView(recyclerView);
         refresh();
+    }
+
+    public Context getContext(){
+        return context;
     }
 
     public void setServicesList(List<UserNotification> servicesList) {
@@ -122,6 +130,14 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         public void bind(Object obj) {
             binding.setVariable(BR.notification, obj);
             binding.executePendingBindings();
+        }
+    }
+
+    public void deleteItem(int position){
+        UserNotification userNotification = userNotifications.get(position);
+        if(delete(Arrays.asList(userNotification))){
+            userNotifications.remove(position);
+            notifyItemRemoved(position);
         }
     }
 
@@ -202,8 +218,20 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         }
     }
 
-    public void deleteAll(){
-
+    public boolean delete(List<UserNotification> userNotifications){
+        // Copy list of notifications and set status="read" for each of them.
+        List<Notification> notifications =
+                userNotifications.stream().map(un -> new Notification(un, "deleted")).collect(Collectors.toList());
+        boolean deleteOk = false;
+        try {
+            deleteOk = new SetMessagesTask().execute(notifications).get();
+            if(!deleteOk){
+                // TODO: deletion failed, show error message
+            }
+        } catch (Exception e) {
+            // TODO: Handle failure
+        }
+        return deleteOk;
     }
 
     public void markAllAsRead(){
@@ -211,8 +239,9 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     }
 
     private void markAsRead(List<UserNotification> userNotifications){
+        // Copy list of notifications and set status="read" for each of them.
         List<Notification> notifications =
-                userNotifications.stream().map(un -> new Notification(un)).collect(Collectors.toList());
+                userNotifications.stream().map(un -> new Notification(un, "read")).collect(Collectors.toList());
         try {
             if(new SetMessagesTask().execute(notifications).get()){
                 userNotifications.stream().forEach(un -> un.setIs_read(true));

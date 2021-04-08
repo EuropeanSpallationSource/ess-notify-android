@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="ess_light">#004155</color>
     <color name="ess_dark">#12222c</color>
+    <color name="delete_background">#ff443a</color>
 </resources>
