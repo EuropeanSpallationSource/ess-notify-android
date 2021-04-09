@@ -2,15 +2,18 @@ package eu.ess.ics.android.essnotify.ui.messages;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -76,7 +79,14 @@ public class MessagesFragment extends Fragment implements MessageRefreshCompleti
         toolbar.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.action_delete_messages:
-                    // Launch dialog to confirm deletion of all messages
+                    new AlertDialog.Builder(getContext())
+                            .setTitle(getContext().getResources().getString(R.string.delete_all_messages))
+                            .setIcon(R.drawable.ic_baseline_warning_amber_24)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    messagesListAdapter.deleteAllMessages();
+                                }})
+                            .setNegativeButton(android.R.string.no, null).show();
                     return true;
                 //case R.id.action_filter_messages:
                     // Launch dialog to filter messages

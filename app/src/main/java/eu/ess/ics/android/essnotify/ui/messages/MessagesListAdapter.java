@@ -133,11 +133,20 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         }
     }
 
-    public void deleteItem(int position){
+    public void deleteMessage(int position){
         UserNotification userNotification = userNotifications.get(position);
         if(delete(Arrays.asList(userNotification))){
             userNotifications.remove(position);
             notifyItemRemoved(position);
+            refresh();
+        }
+    }
+
+    public void deleteAllMessages(){
+        if(delete(userNotifications)){
+            userNotifications.clear();
+            notifyDataSetChanged();
+            refresh();
         }
     }
 

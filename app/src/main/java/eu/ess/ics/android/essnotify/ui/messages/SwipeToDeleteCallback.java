@@ -21,7 +21,6 @@ package eu.ess.ics.android.essnotify.ui.messages;
 import android.graphics.Canvas;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.View;
 
 import androidx.core.content.ContextCompat;
@@ -47,7 +46,7 @@ public class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback  {
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
         int position = viewHolder.getAdapterPosition();
-        adapter.deleteItem(position);
+        adapter.deleteMessage(position);
     }
 
     @Override
