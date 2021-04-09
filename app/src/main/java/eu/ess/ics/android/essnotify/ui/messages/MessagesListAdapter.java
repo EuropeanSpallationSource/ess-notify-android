@@ -18,6 +18,7 @@
 
 package eu.ess.ics.android.essnotify.ui.messages;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -25,6 +26,7 @@ import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -210,6 +212,14 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     @Override
     public void messageClicked(View view, UserNotification userNotification){
         markAsRead(Arrays.asList(userNotification));
+        TextView bodyText = view.findViewById(R.id.bodyText);
+        userNotification.setExpanded(!userNotification.getExpanded());
+        ObjectAnimator animation = ObjectAnimator.ofInt(
+                bodyText,
+                "maxLines",
+                userNotification.getExpanded() ? 100 : 3);
+        animation.setDuration(300);
+        animation.start();
     }
 
     private class SetMessagesTask extends AsyncTask<List<Notification>, Void, Boolean>{

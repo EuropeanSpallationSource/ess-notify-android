@@ -36,6 +36,7 @@ import java.util.TimeZone;
 
 import eu.ess.ics.android.essnotify.BR;
 import eu.ess.ics.android.essnotify.Constants;
+import kotlin.jvm.Volatile;
 
 /**
  * Holds data describing a notification.
@@ -51,6 +52,17 @@ public class UserNotification extends BaseObservable {
     private String service_id;
     private boolean is_read;
     private int visibility;
+    private boolean expanded;
+
+    @JsonIgnore
+    public boolean getExpanded(){
+        return expanded;
+    }
+
+    @JsonIgnore
+    public void setExpanded(boolean expanded){
+        this.expanded = expanded;
+    }
 
     @Bindable
     @JsonIgnore
