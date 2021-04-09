@@ -88,11 +88,12 @@ public class MessagesFragment extends Fragment implements MessageRefreshCompleti
                                 }})
                             .setNegativeButton(android.R.string.no, null).show();
                     return true;
-                //case R.id.action_filter_messages:
-                    // Launch dialog to filter messages
-                //    return true;
+                case R.id.action_filter_messages:
+                    messagesListAdapter.showFilterDialog(getParentFragmentManager());
+                    return true;
                 case R.id.action_mark_all_as_read:
                     messagesListAdapter.markAllAsRead();
+                    return true;
                 default:
                     return false;
             }

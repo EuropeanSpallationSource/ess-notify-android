@@ -29,6 +29,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,7 +39,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import eu.ess.ics.android.essnotify.BR;
@@ -56,7 +57,7 @@ import retrofit2.Response;
  * Adapter for items in the service settings list.
  */
 public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapter.ViewHolder>
-    implements MessageItemClickListener{
+        implements MessageItemClickListener {
 
     private List<UserNotification> userNotifications;
     private Context context;
@@ -66,16 +67,18 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     private List<UserService> userServiceList;
     private Map<String, String> userServiceNames;
 
+    private List<String> currentFilter = new ArrayList<>();
+
     public MessagesListAdapter() {
         // Instantiate with an empty list to avoid NPEs.
         this.userNotifications = new ArrayList<>();
     }
 
-    public void addRefreshCompletionListener(MessageRefreshCompletionListener messageRefreshCompletionListener){
+    public void addRefreshCompletionListener(MessageRefreshCompletionListener messageRefreshCompletionListener) {
         refreshCompleteionListeners.add(messageRefreshCompletionListener);
     }
 
-    public void removeRefreshCompletionListener(MessageRefreshCompletionListener messageRefreshCompletionListener){
+    public void removeRefreshCompletionListener(MessageRefreshCompletionListener messageRefreshCompletionListener) {
         refreshCompleteionListeners.remove(messageRefreshCompletionListener);
     }
 
@@ -89,7 +92,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         refresh();
     }
 
-    public Context getContext(){
+    public Context getContext() {
         return context;
     }
 
@@ -135,17 +138,17 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         }
     }
 
-    public void deleteMessage(int position){
+    public void deleteMessage(int position) {
         UserNotification userNotification = userNotifications.get(position);
-        if(delete(Arrays.asList(userNotification))){
+        if (delete(Arrays.asList(userNotification))) {
             userNotifications.remove(position);
             notifyItemRemoved(position);
             refresh();
         }
     }
 
-    public void deleteAllMessages(){
-        if(delete(userNotifications)){
+    public void deleteAllMessages() {
+        if (delete(userNotifications)) {
             userNotifications.clear();
             notifyDataSetChanged();
             refresh();
@@ -156,7 +159,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
      * First retrieves list if {@link UserService} such that service id can be mapped to
      * service name. Once completed the list of messages is retrieved.
      */
-    public void refresh(){
+    public void refresh() {
         try {
             userServiceList = new GetSubscriptionsTask().execute(context).get();
             userServiceNames = mapServiceId2ServiceName(userServiceList);
@@ -166,7 +169,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         }
     }
 
-    private Map<String, String> mapServiceId2ServiceName(List<UserService> userServiceList){
+    private Map<String, String> mapServiceId2ServiceName(List<UserService> userServiceList) {
         Map<String, String> map = new HashMap<>();
         userServiceList.stream().forEach(userService -> map.put(userService.getId(), userService.getCategory()));
         return map;
@@ -191,7 +194,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         public void onPostExecute(List<UserNotification> userServiceList) {
             if (userServiceList != null) {
                 userServiceList.sort((u1, u2) -> u2.getTimestamp().compareTo(u1.getTimestamp()));
-                setServicesList(userServiceList);
+                setServicesList(filter(userServiceList));
             } else {
                 // TODO: if list cannot be retrieved, UI should show some error message.
             }
@@ -200,9 +203,9 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     }
 
     @Override
-    public void linkClicked(UserNotification userNotification){
+    public void linkClicked(UserNotification userNotification) {
         String url = userNotification.getUrl();
-        if(url == null || url.isEmpty()){
+        if (url == null || url.isEmpty()) {
             return;
         }
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -210,7 +213,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     }
 
     @Override
-    public void messageClicked(View view, UserNotification userNotification){
+    public void messageClicked(View view, UserNotification userNotification) {
         markAsRead(Arrays.asList(userNotification));
         TextView bodyText = view.findViewById(R.id.bodyText);
         userNotification.setExpanded(!userNotification.getExpanded());
@@ -222,7 +225,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         animation.start();
     }
 
-    private class SetMessagesTask extends AsyncTask<List<Notification>, Void, Boolean>{
+    private class SetMessagesTask extends AsyncTask<List<Notification>, Void, Boolean> {
         @Override
         public Boolean doInBackground(List<Notification>... notifications) {
             BackendService backendService =
@@ -237,14 +240,14 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         }
     }
 
-    public boolean delete(List<UserNotification> userNotifications){
+    public boolean delete(List<UserNotification> userNotifications) {
         // Copy list of notifications and set status="read" for each of them.
         List<Notification> notifications =
                 userNotifications.stream().map(un -> new Notification(un, "deleted")).collect(Collectors.toList());
         boolean deleteOk = false;
         try {
             deleteOk = new SetMessagesTask().execute(notifications).get();
-            if(!deleteOk){
+            if (!deleteOk) {
                 // TODO: deletion failed, show error message
             }
         } catch (Exception e) {
@@ -253,20 +256,36 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         return deleteOk;
     }
 
-    public void markAllAsRead(){
+    public void markAllAsRead() {
         markAsRead(userNotifications);
     }
 
-    private void markAsRead(List<UserNotification> userNotifications){
+    private void markAsRead(List<UserNotification> userNotifications) {
         // Copy list of notifications and set status="read" for each of them.
         List<Notification> notifications =
                 userNotifications.stream().map(un -> new Notification(un, "read")).collect(Collectors.toList());
         try {
-            if(new SetMessagesTask().execute(notifications).get()){
+            if (new SetMessagesTask().execute(notifications).get()) {
                 userNotifications.stream().forEach(un -> un.setIs_read(true));
             }
         } catch (Exception e) {
             // TODO: Handle failure
         }
+    }
+
+    private List<UserNotification> filter(List<UserNotification> userNotifications){
+        if(currentFilter.isEmpty()){
+            return userNotifications;
+        }
+        return userNotifications.stream()
+                .filter(n -> currentFilter.contains(n.getService_id())).collect(Collectors.toList());
+    }
+
+
+    public void showFilterDialog(FragmentManager fragmentManager){
+        List<UserService> currentSubscriptions =
+                userServiceList.stream().filter(u -> u.isIs_subscribed()).collect(Collectors.toList());
+        DialogFragment dialog = new MessageFilterDialogFragment(currentSubscriptions, currentFilter);
+        dialog.show(fragmentManager, "NoticeDialogFragment");
     }
 }

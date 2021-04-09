@@ -19,6 +19,10 @@
 package eu.ess.ics.android.essnotify.ui.settings;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -107,6 +111,9 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
         UserService dataModel = filteredUserServices.get(position);
         viewHolder.bind(dataModel);
         viewHolder.binding.setItemClickListener(this);
+        Drawable drawable = new ColorDrawable(Color.parseColor("#FF" + dataModel.getColor()));
+
+        viewHolder.itemView.setBackground(drawable);
     }
 
     @Override

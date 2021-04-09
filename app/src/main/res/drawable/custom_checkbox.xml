@@ -17,21 +17,7 @@
   ~  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <item android:id="@+id/action_mark_all_as_read"
-        android:title="@string/action_mark_all_as_read"
-        android:icon="@drawable/ic_baseline_mark_email_read_24"
-        app:showAsAction="ifRoom"/>
-
-    <item android:id="@+id/action_delete_messages"
-        android:title="@string/action_delete_message"
-        android:icon="@drawable/ic_notify_trash"
-        app:showAsAction="ifRoom"/>
-
-    <item android:id="@+id/action_filter_messages"
-        android:title="@string/action_filter_message"
-        android:icon="@drawable/ic_baseline_filter_list_24"
-        app:showAsAction="ifRoom"/>
-</menu>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="false" android:drawable="@drawable/ic_baseline_check_box_outline_blank_24" />
+    <item android:state_checked="true" android:drawable="@drawable/ic_baseline_check_box_24" />
+</selector>

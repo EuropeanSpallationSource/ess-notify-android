@@ -14,8 +14,21 @@
         <!-- Customize your theme here. -->
         <item name="android:textColorHint">@android:color/white</item>
         <item name="colorAccent">@android:color/white</item>
+        <item name="android:checkboxStyle">@style/CustomCheckBox</item>
     </style>
     <style name="ThemeOverlay.AppTheme.TextInputEditText.Outlined" parent="">
         <item name="colorPrimary">@android:color/white</item>
+    </style>
+
+    <style name="CustomCheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/custom_checkbox</item>
+    </style>
+
+    <style name="AlertDialogCustom" parent="@android:style/Theme.Holo.Light.Dialog">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@color/ess_light</item>
+        <item name="textColorAlertDialogListItem">@android:color/white</item>
+        <item name="android:listChoiceIndicatorMultiple">@drawable/custom_checkbox</item>
     </style>
 </resources>
