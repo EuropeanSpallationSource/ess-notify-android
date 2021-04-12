@@ -22,21 +22,15 @@ import android.view.View;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
-import androidx.databinding.Observable;
-import androidx.databinding.ObservableBoolean;
-import androidx.databinding.ObservableInt;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.TimeZone;
 
 import eu.ess.ics.android.essnotify.BR;
 import eu.ess.ics.android.essnotify.Constants;
-import kotlin.jvm.Volatile;
 
 /**
  * Holds data describing a notification.
@@ -51,7 +45,7 @@ public class UserNotification extends BaseObservable {
     private String timestamp;
     private String service_id;
     private boolean is_read;
-    private int visibility;
+    private int messageReadVisibility;
     private boolean expanded;
 
     @JsonIgnore
@@ -66,14 +60,14 @@ public class UserNotification extends BaseObservable {
 
     @Bindable
     @JsonIgnore
-    public int getVisibility(){
-        return visibility;
+    public int getMessageReadVisibility(){
+        return messageReadVisibility;
     }
 
     @JsonIgnore
-    public void setVisibility(int visibility){
-        this.visibility = visibility;
-        notifyPropertyChanged(BR.visibility);
+    public void setMessageReadVisibility(int messageReadVisibility){
+        this.messageReadVisibility = messageReadVisibility;
+        notifyPropertyChanged(BR.messageReadVisibility);
     }
 
     public int getId() {
@@ -130,8 +124,8 @@ public class UserNotification extends BaseObservable {
 
     public void setIs_read(boolean is_read) {
         this.is_read = is_read;
-        this.visibility = is_read ? View.GONE : View.VISIBLE;
-        notifyPropertyChanged(BR.visibility);
+        this.messageReadVisibility = is_read ? View.GONE : View.VISIBLE;
+        notifyPropertyChanged(BR.messageReadVisibility);
     }
 
     public static String formatDate(String originalDate){

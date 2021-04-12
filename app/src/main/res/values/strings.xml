@@ -29,8 +29,8 @@
     <string name="navigation_home">Home</string>
     <string name="navigation_settings">Settings</string>
 
-    <string name="delete_all_messages">Delete all messages?</string>
+    <string name="delete_all_messages">Delete messages?</string>
 
-    <string name="filter_messages">Filter Messages</string>
+    <string name="filter_messages">Select Services</string>
     <string name="all">All</string>
 </resources>

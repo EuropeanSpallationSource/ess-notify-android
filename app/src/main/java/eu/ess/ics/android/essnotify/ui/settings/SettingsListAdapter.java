@@ -111,9 +111,9 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
         UserService dataModel = filteredUserServices.get(position);
         viewHolder.bind(dataModel);
         viewHolder.binding.setItemClickListener(this);
-        Drawable drawable = new ColorDrawable(Color.parseColor("#FF" + dataModel.getColor()));
-
-        viewHolder.itemView.setBackground(drawable);
+        // Color coding disabled. Not sure it's a good idea...
+        //Drawable drawable = new ColorDrawable(Color.parseColor("#FF" + dataModel.getColor()));
+        //viewHolder.itemView.setBackground(drawable);
     }
 
     @Override

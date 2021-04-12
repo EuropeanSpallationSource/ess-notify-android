@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -79,14 +78,16 @@ public class MessagesFragment extends Fragment implements MessageRefreshCompleti
         toolbar.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.action_delete_messages:
-                    new AlertDialog.Builder(getContext())
-                            .setTitle(getContext().getResources().getString(R.string.delete_all_messages))
-                            .setIcon(R.drawable.ic_baseline_warning_amber_24)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    messagesListAdapter.deleteAllMessages();
-                                }})
-                            .setNegativeButton(android.R.string.no, null).show();
+                    if(messagesListAdapter.getItemCount() > 0){
+                        new AlertDialog.Builder(getContext())
+                                .setTitle(getContext().getResources().getString(R.string.delete_all_messages))
+                                .setIcon(R.drawable.ic_baseline_warning_amber_24)
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        messagesListAdapter.deleteAllMessages();
+                                    }})
+                                .setNegativeButton(android.R.string.no, null).show();
+                    }
                     return true;
                 case R.id.action_filter_messages:
                     messagesListAdapter.showFilterDialog(getParentFragmentManager());
@@ -104,6 +105,5 @@ public class MessagesFragment extends Fragment implements MessageRefreshCompleti
     public void messagesRefreshed(){
         swipeRefreshLayout.setRefreshing(false);
     }
-
 
 }

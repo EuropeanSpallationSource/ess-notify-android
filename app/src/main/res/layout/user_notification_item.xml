@@ -94,7 +94,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="1dp"
                     android:layout_marginEnd="5dp"
-                    android:visibility="@{notification.visibility}"
+                    android:visibility="@{notification.messageReadVisibility}"
                     app:srcCompat="@drawable/ic_baseline_notification_unread_24" />
 
                 <TextView
