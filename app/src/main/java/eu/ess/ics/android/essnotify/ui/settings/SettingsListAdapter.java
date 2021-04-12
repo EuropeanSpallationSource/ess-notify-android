@@ -19,10 +19,6 @@
 package eu.ess.ics.android.essnotify.ui.settings;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +41,7 @@ import eu.ess.ics.android.essnotify.backend.GetSubscriptionsTask;
 import eu.ess.ics.android.essnotify.databinding.ServiceItemBinding;
 import eu.ess.ics.android.essnotify.datamodel.Service;
 import eu.ess.ics.android.essnotify.datamodel.UserService;
-import eu.ess.ics.android.essnotify.ui.LoginActivityRedirect;
+import eu.ess.ics.android.essnotify.ui.BackendErrorHelper;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -69,15 +65,17 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         context = recyclerView.getContext();
-        //new GetSubscriptionsTask().execute(context);
         try {
             List<UserService> userServiceList =
                     new GetSubscriptionsTask().execute(context).get();
             if(userServiceList != null) {
                 setServicesList(userServiceList);
             }
+            else{
+                BackendErrorHelper.showNetworkErrorDialog(context);
+            }
         } catch (Exception e) {
-            // TODO: probably nothing.
+            // Ignore.
         }
     }
 
@@ -144,7 +142,13 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
         service.setId(userService.getId());
         service.setIs_subscribed(checkBox.isChecked());
 
-        new SetSubscriptionTask(Arrays.asList(service)).execute();
+        try {
+            if(new SetSubscriptionTask(Arrays.asList(service)).execute().get() == -1){
+                BackendErrorHelper.showNetworkErrorDialog(context);
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
     }
 
     private class SetSubscriptionTask extends AsyncTask<Void, Void, Integer> {
@@ -182,7 +186,7 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
                }
            }
            else if(httpStatus == 401){
-               LoginActivityRedirect.goToLogin(context);
+               BackendErrorHelper.goToLogin(context);
            }
         }
     }

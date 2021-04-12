@@ -18,15 +18,29 @@
 
 package eu.ess.ics.android.essnotify.ui;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 
 import eu.ess.ics.android.essnotify.LoginActivity;
+import eu.ess.ics.android.essnotify.R;
 
-public class LoginActivityRedirect {
+public class BackendErrorHelper {
 
     public static void goToLogin(Context context){
         Intent loginIntent = new Intent(context, LoginActivity.class);
         context.startActivity(loginIntent);
+    }
+
+    public static void showNetworkErrorDialog(Context context) {
+
+        new AlertDialog.Builder(context)
+                .setTitle(context.getResources().getString(R.string.network_error))
+                .setMessage(context.getResources().getString(R.string.network_error_detail))
+                // A null listener allows the button to dismiss the dialog and take no further action.
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .create()
+                .show();
     }
 }

@@ -33,4 +33,7 @@
 
     <string name="filter_messages">Select Services</string>
     <string name="all">All</string>
+
+    <string name="network_error">Network Error</string>
+    <string name="network_error_detail">Failed to communicate with ESS Notify service.</string>
 </resources>

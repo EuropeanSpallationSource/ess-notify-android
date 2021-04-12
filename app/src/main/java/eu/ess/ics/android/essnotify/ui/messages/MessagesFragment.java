@@ -34,7 +34,7 @@ public class MessagesFragment extends Fragment implements MessageRefreshCompleti
     private BroadcastReceiver myReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            messagesListAdapter.refresh();
+            messagesListAdapter.refresh(false);
         }
     };
 
@@ -69,7 +69,7 @@ public class MessagesFragment extends Fragment implements MessageRefreshCompleti
             new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    messagesListAdapter.refresh();
+                    messagesListAdapter.refresh(true);
                 }
             });
         Toolbar toolbar = (Toolbar)view.findViewById(R.id.messageToolbar);

@@ -49,7 +49,7 @@ import eu.ess.ics.android.essnotify.databinding.UserNotificationItemBinding;
 import eu.ess.ics.android.essnotify.datamodel.Notification;
 import eu.ess.ics.android.essnotify.datamodel.UserNotification;
 import eu.ess.ics.android.essnotify.datamodel.UserService;
-import eu.ess.ics.android.essnotify.ui.LoginActivityRedirect;
+import eu.ess.ics.android.essnotify.ui.BackendErrorHelper;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -101,7 +101,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         ItemTouchHelper itemTouchHelper = new
                 ItemTouchHelper(new SwipeToDeleteCallback(this));
         itemTouchHelper.attachToRecyclerView(recyclerView);
-        refresh();
+        refresh(true);
     }
 
     public Context getContext() {
@@ -155,7 +155,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         if (delete(Arrays.asList(userNotification))) {
             filteredUserNotifications.remove(position);
             notifyItemRemoved(position);
-            refresh();
+            refresh(false);
         }
     }
 
@@ -163,7 +163,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         if (delete(filteredUserNotifications)) {
             filteredUserNotifications.clear();
             notifyDataSetChanged();
-            refresh();
+            refresh(false);
         }
     }
 
@@ -171,16 +171,22 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
      * First retrieves list if {@link UserService} such that service id can be mapped to
      * service name. Once completed the list of messages is retrieved.
      */
-    public void refresh() {
+    public void refresh(boolean showNetworkError) {
         try {
             userServiceList = new GetSubscriptionsTask().execute(context).get();
             if(userServiceList == null){
+                if(showNetworkError){
+                    BackendErrorHelper.showNetworkErrorDialog(context);
+                }
+                refreshCompleteionListeners.stream().forEach(MessageRefreshCompletionListener::messagesRefreshed);
                 return;
             }
             userServiceNames = mapServiceId2ServiceName(userServiceList);
             new GetMessagesTask().execute();
         } catch (Exception e) {
-            // TODO: nothing? Or show error?
+            if(showNetworkError){
+                BackendErrorHelper.showNetworkErrorDialog(context);
+            }
         }
     }
 
@@ -200,7 +206,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
             try {
                 Response<List<UserNotification>> response = call.execute();
                 if(response.code() == 401){
-                    LoginActivityRedirect.goToLogin(getContext());
+                    BackendErrorHelper.goToLogin(getContext());
                     return null;
                 }
                 return response.body();
@@ -255,7 +261,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
             try {
                 Response<Void> response = call.execute();
                 if(response.code() == 401){
-                    LoginActivityRedirect.goToLogin(context);
+                    BackendErrorHelper.goToLogin(context);
                     return false;
                 }
                 return true;
@@ -310,6 +316,10 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
 
 
     public void showFilterDialog(FragmentManager fragmentManager){
+        // userServiceList may be null if app was launched when off-line
+        if(userServiceList == null || userServiceList.isEmpty()){
+            return;
+        }
         List<UserService> currentSubscriptions =
                 userServiceList.stream().filter(u -> u.isIs_subscribed()).collect(Collectors.toList());
         MessageFilterDialogFragment dialog = new MessageFilterDialogFragment(this, currentSubscriptions, currentFilter);
