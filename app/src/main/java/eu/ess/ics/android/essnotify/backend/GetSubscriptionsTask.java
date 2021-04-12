@@ -19,12 +19,15 @@
 package eu.ess.ics.android.essnotify.backend;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 
 import java.util.List;
 
+import eu.ess.ics.android.essnotify.LoginActivity;
 import eu.ess.ics.android.essnotify.ServerAPIBase;
 import eu.ess.ics.android.essnotify.datamodel.UserService;
+import eu.ess.ics.android.essnotify.ui.LoginActivityRedirect;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -37,6 +40,10 @@ public class GetSubscriptionsTask extends AsyncTask<Context, Void, List<UserServ
         Call<List<UserService>> call = backendService.getUserServices();
         try {
             Response<List<UserService>> response = call.execute();
+            if(response.code() == 401){ // ESS token wrong or expired.
+                LoginActivityRedirect.goToLogin(args[0]);
+                return null;
+            }
             return response.body();
         } catch (Exception e) {
             return null;

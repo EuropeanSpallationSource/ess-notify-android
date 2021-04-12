@@ -49,6 +49,7 @@ import eu.ess.ics.android.essnotify.databinding.UserNotificationItemBinding;
 import eu.ess.ics.android.essnotify.datamodel.Notification;
 import eu.ess.ics.android.essnotify.datamodel.UserNotification;
 import eu.ess.ics.android.essnotify.datamodel.UserService;
+import eu.ess.ics.android.essnotify.ui.LoginActivityRedirect;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -173,6 +174,9 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     public void refresh() {
         try {
             userServiceList = new GetSubscriptionsTask().execute(context).get();
+            if(userServiceList == null){
+                return;
+            }
             userServiceNames = mapServiceId2ServiceName(userServiceList);
             new GetMessagesTask().execute();
         } catch (Exception e) {
@@ -195,6 +199,10 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
             Call<List<UserNotification>> call = backendService.getNotifications();
             try {
                 Response<List<UserNotification>> response = call.execute();
+                if(response.code() == 401){
+                    LoginActivityRedirect.goToLogin(getContext());
+                    return null;
+                }
                 return response.body();
             } catch (Exception e) {
                 return null;
@@ -209,6 +217,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
                 setNotifictions();
             } else {
                 // TODO: if list cannot be retrieved, UI should show some error message.
+                return;
             }
             refreshCompleteionListeners.stream().forEach(MessageRefreshCompletionListener::messagesRefreshed);
         }
@@ -244,7 +253,11 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
                     ServerAPIBase.getInstance().getBackendService(context);
             Call<Void> call = backendService.setNotifications(notifications[0]);
             try {
-                call.execute();
+                Response<Void> response = call.execute();
+                if(response.code() == 401){
+                    LoginActivityRedirect.goToLogin(context);
+                    return false;
+                }
                 return true;
             } catch (Exception e) {
                 return false;

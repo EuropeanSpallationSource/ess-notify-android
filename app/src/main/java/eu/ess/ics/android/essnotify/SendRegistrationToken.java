@@ -47,7 +47,7 @@ public class SendRegistrationToken extends AsyncTask<Void, Void, Void> {
                     context.getSharedPreferences(context.getString(R.string.ess_preferences), Context.MODE_PRIVATE);
             sharedPref.edit().putString(Constants.FIREBASE_REGISTRATION_TOKEN, firebaseRegistrationToken).commit();
         } catch (Exception e) {
-           e.printStackTrace();
+          // Ignore. This will be re-attempted on next app start.
         }
         return null;
     }

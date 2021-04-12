@@ -87,11 +87,4 @@ public interface BackendService {
     @PATCH("/api/v2/users/user/notifications")
     Call<Void> setNotifications(@Body List<Notification> notifications);
 
-    /**
-     * Retrieves user profile data, see {@link User}
-     * @return A {@link User} object if call is successful.
-     */
-    @GET("/api/v2/users/user/profile")
-    Call<User> checkUserProfile();
-
 }

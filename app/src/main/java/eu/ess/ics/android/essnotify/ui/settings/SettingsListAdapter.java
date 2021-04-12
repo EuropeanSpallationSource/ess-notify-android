@@ -45,6 +45,7 @@ import eu.ess.ics.android.essnotify.backend.GetSubscriptionsTask;
 import eu.ess.ics.android.essnotify.databinding.ServiceItemBinding;
 import eu.ess.ics.android.essnotify.datamodel.Service;
 import eu.ess.ics.android.essnotify.datamodel.UserService;
+import eu.ess.ics.android.essnotify.ui.LoginActivityRedirect;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -179,6 +180,9 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
                } catch (Exception e) {
                    // TODO: probably nothing.
                }
+           }
+           else if(httpStatus == 401){
+               LoginActivityRedirect.goToLogin(context);
            }
         }
     }
