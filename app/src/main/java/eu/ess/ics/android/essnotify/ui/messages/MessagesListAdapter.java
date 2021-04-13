@@ -108,7 +108,10 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         return context;
     }
 
-    public void setNotifictions() {
+    /**
+     * Filters current list of messages and requests UI update.
+     */
+    private void setNotifictions() {
         filter();
         notifyDataSetChanged();
     }
@@ -150,15 +153,24 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         }
     }
 
+    /**
+     * Delete a single message, e.g. when user swipes left in the message list view.
+     * @param position Position in the currently displayed message list.
+     */
     public void deleteMessage(int position) {
         UserNotification userNotification = filteredUserNotifications.get(position);
-        if (delete(Arrays.asList(userNotification))) {
-            filteredUserNotifications.remove(position);
-            notifyItemRemoved(position);
+        filteredUserNotifications.remove(position);
+        notifyItemRemoved(position);
+        if(delete(Arrays.asList(userNotification))) {
             refresh(false);
         }
     }
 
+    /**
+     * Deletes all messages currently in the view. When back-end acknowledges the list
+     * view is refreshed, which in turn may show older messages that have not yet been
+     * deleted by user.
+     */
     public void deleteAllMessages() {
         if (delete(filteredUserNotifications)) {
             filteredUserNotifications.clear();
@@ -190,12 +202,21 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         }
     }
 
+    /**
+     * Helper method mapping service id to service name.
+     * @param userServiceList The full list of services.
+     * @return A {@link Map} where key is service id and value is service name.
+     */
     private Map<String, String> mapServiceId2ServiceName(List<UserService> userServiceList) {
         Map<String, String> map = new HashMap<>();
         userServiceList.stream().forEach(userService -> map.put(userService.getId(), userService.getCategory()));
         return map;
     }
 
+    /**
+     * An {@link AsyncTask} retrieving messages from the back-end service. If successful, the
+     * call will update the message view, i.e. calling code need not do it.
+     */
     private class GetMessagesTask extends AsyncTask<Void, Void, List<UserNotification>> {
 
         @Override
@@ -229,16 +250,27 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         }
     }
 
+    /**
+     * Handles click on link icon in message header. The view should display the link icon
+     * only if there is a non-empty URL field ({@link UserNotification#getUrl()} in the message, so there is no need for
+     * additional checks of the URL.
+     * @param userNotification
+     */
     @Override
     public void linkClicked(UserNotification userNotification) {
         String url = userNotification.getUrl();
-        if (url == null || url.isEmpty()) {
-            return;
-        }
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         context.startActivity(browserIntent);
     }
 
+    /**
+     * Handles click on a message. The wanted outcome is to mark the message a read (i.e. to remove
+     * red dot next to title) and to toggle the text view size. By default the text view shows
+     * 3 lines, but when toggled expands to at most 100 lines. This way a user may still read a longer
+     * message and then collapse the text view when done.
+     * @param view
+     * @param userNotification
+     */
     @Override
     public void messageClicked(View view, UserNotification userNotification) {
         markAsRead(Arrays.asList(userNotification));
@@ -252,6 +284,10 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         animation.start();
     }
 
+    /**
+     * An {@link AsyncTask} to set the "status" of a message, i.e. "read" or "deleted". The
+     * status is sent to the remote service in order to keep data consistent.
+     */
     private class SetMessagesTask extends AsyncTask<List<Notification>, Void, Boolean> {
         @Override
         public Boolean doInBackground(List<Notification>... notifications) {
@@ -262,7 +298,6 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
                 Response<Void> response = call.execute();
                 if(response.code() == 401){
                     BackendErrorHelper.goToLogin(context);
-                    return false;
                 }
                 return true;
             } catch (Exception e) {
@@ -271,6 +306,11 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         }
     }
 
+    /**
+     * Deletes messages on the remote service, i.e. sends status "deleted".
+     * @param userNotifications
+     * @return
+     */
     public boolean delete(List<UserNotification> userNotifications) {
         // Copy list of notifications and set status="read" for each of them.
         List<Notification> notifications =
@@ -278,11 +318,11 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         boolean deleteOk = false;
         try {
             deleteOk = new SetMessagesTask().execute(notifications).get();
-            if (!deleteOk) {
-                // TODO: deletion failed, show error message
+            if(!deleteOk){
+                BackendErrorHelper.showNetworkErrorDialog(context);
             }
         } catch (Exception e) {
-            // TODO: Handle failure
+            // Ignore
         }
         return deleteOk;
     }

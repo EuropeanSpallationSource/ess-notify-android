@@ -32,8 +32,8 @@ import eu.ess.ics.android.essnotify.R;
 import eu.ess.ics.android.essnotify.datamodel.UserService;
 
 /**
- * Dialog showing the list of services to which the user has subscribed. User may check/uncheck
- * items to define a filter to be used by message view. The special item "All" (on top) is
+ * Dialog showing the list of services to which the user has subscribed. User may select an item
+ * thus defining which service to show in the message list. The special item "All" (on top) is
  * of course used to indicate that messages should not be filtered in the view.
  */
 public class MessageFilterDialogFragment extends DialogFragment {
@@ -86,17 +86,5 @@ public class MessageFilterDialogFragment extends DialogFragment {
         AlertDialog dialog = builder.create();
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         return dialog;
-    }
-
-    private boolean[] computeChecked(List<UserService> serviceList, List<String> currentFilter){
-        boolean[] checked = new boolean[serviceList.size() + 1];
-        if(currentFilter.isEmpty()){
-            checked[0] = true;
-        }
-        return checked;
-    }
-
-    public String getSelection(){
-        return currentFilter;
     }
 }

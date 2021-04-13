@@ -18,7 +18,6 @@
 
 package eu.ess.ics.android.essnotify;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 public class Constants {

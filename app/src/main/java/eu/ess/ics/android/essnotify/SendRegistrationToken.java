@@ -25,6 +25,9 @@ import android.os.AsyncTask;
 import eu.ess.ics.android.essnotify.datamodel.DeviceToken;
 import eu.ess.ics.android.essnotify.backend.BackendService;
 
+/**
+ * Sends the FCM token to the backend service.
+ */
 public class SendRegistrationToken extends AsyncTask<Void, Void, Void> {
 
     private String firebaseRegistrationToken;

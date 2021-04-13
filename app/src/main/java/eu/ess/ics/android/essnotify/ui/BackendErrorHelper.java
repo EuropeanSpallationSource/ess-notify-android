@@ -27,18 +27,27 @@ import eu.ess.ics.android.essnotify.R;
 
 public class BackendErrorHelper {
 
+    /**
+     * Helper method redirecting the UI to the login view. Should be used if
+     * a backend call returns HTTP status 401.
+     * @param context
+     */
     public static void goToLogin(Context context){
         Intent loginIntent = new Intent(context, LoginActivity.class);
         context.startActivity(loginIntent);
     }
 
+    /**
+     * Displays warning dialog informing about network issues. This should not be called
+     * from an {@link android.os.AsyncTask}, and should be called only if the underlying
+     * issue is indeed a network problem.
+     * @param context
+     */
     public static void showNetworkErrorDialog(Context context) {
-
         new AlertDialog.Builder(context)
                 .setTitle(context.getResources().getString(R.string.network_error))
                 .setMessage(context.getResources().getString(R.string.network_error_detail))
-                // A null listener allows the button to dismiss the dialog and take no further action.
-                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.ok, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .create()
                 .show();
