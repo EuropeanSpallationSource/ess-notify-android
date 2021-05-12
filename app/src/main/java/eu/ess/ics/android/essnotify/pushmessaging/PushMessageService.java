@@ -18,7 +18,6 @@
 
 package eu.ess.ics.android.essnotify.pushmessaging;
 
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.media.RingtoneManager;
@@ -27,6 +26,7 @@ import android.net.Uri;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.TaskStackBuilder;
+
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -38,6 +38,8 @@ public class PushMessageService extends FirebaseMessagingService {
 
     public static final String NEW_NOTIFICATION = "NEW_NOTIFICATION";
 
+    int id = 1;
+
     /**
      * Called when message is received.
      *
@@ -45,11 +47,17 @@ public class PushMessageService extends FirebaseMessagingService {
      */
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        sendSingleNotification(remoteMessage.getData().get("title"),
+        sendNotification(remoteMessage.getData().get("title"),
                 remoteMessage.getData().get("body"));
     }
 
-    private void sendSingleNotification(String title, String body)
+    /**
+     * Notifications are grouped, i.e. multiple notifications are presented as one single notification
+     * icon, and the notification UI lists all incoming notifications.
+     * @param title
+     * @param body
+     */
+    private void sendNotification(String title, String body)
     {
         Intent intent = new Intent(this, BootstrapActivity.class);
 
@@ -62,24 +70,39 @@ public class PushMessageService extends FirebaseMessagingService {
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
 
+        String groupId = "eu.ess.ics.android.essnotify";
+
+        // The below implementation is a result of trial-and-error. The official docs on
+        // how to created grouped notifications are (at the time of writing, May 2021)
+        // incomplete and consequently confusing.
+        NotificationCompat.Builder groupBuilder =
+                new NotificationCompat.Builder(this, getResources().getString(R.string.ess_notification_channel))
+                        .setContentTitle(title)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setContentText(body)
+                        .setGroupSummary(true)
+                        .setGroup(groupId)
+                        .setContentIntent(pendingIntent);
+
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "channel_direct_message")
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, getResources().getString(R.string.ess_notification_channel))
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
-                .setWhen(System.currentTimeMillis())
                 .setContentText(body)
                 .setAutoCancel(true)
-                .setColor(0xFF004155)
-                .setChannelId(getResources().getString(R.string.ess_notification_channel))
                 .setSound(defaultSoundUri)
+                .setGroup(groupId)
                 .setContentIntent(pendingIntent);
-
-        Notification notification = notificationBuilder.build();
 
         NotificationManagerCompat notificationManager =
                 NotificationManagerCompat.from(this);
 
-        notificationManager.notify(1, notification);
+        // Yes, this is actually needed! Looks like two separate notifications are dispatched.
+        // Note in particular that the first uses a fixed notification id, while the second
+        // must increment a notification id. Is this documented by Google? Not really...
+        notificationManager.notify( groupId, 1, groupBuilder.build());
+        notificationManager.notify(++id, notificationBuilder.build());
 
         Intent broadcastIntent = new Intent(NEW_NOTIFICATION);
         sendBroadcast(broadcastIntent);

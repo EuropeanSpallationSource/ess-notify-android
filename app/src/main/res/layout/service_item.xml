@@ -28,6 +28,8 @@
     </data>
 
     <FrameLayout
+        android:id="@+id/serviceItem"
+        style="@style/MyCheckbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical">
@@ -36,9 +38,9 @@
             android:id="@+id/userServiceSelected"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{model.category}"
-            android:textColor="@android:color/white"
             android:checked="@{model.is_subscribed}"
-            android:onClick="@{(view) -> itemClickListener.serviceItemClicked(view, model)}"/>
+            android:onClick="@{(view) -> itemClickListener.serviceItemClicked(view, model)}"
+            android:text="@{model.category}"
+            android:textColor="@android:color/white" />
     </FrameLayout>
 </layout>

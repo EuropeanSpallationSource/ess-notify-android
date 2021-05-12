@@ -21,6 +21,9 @@ package eu.ess.ics.android.essnotify.ui.messages;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
@@ -76,6 +79,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
 
     private List<UserService> userServiceList;
     private Map<String, String> userServiceNames;
+    private Map<String, Drawable> userServiceColors;
 
     private String currentFilter;
 
@@ -131,6 +135,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         viewHolder.bind(dataModel);
         viewHolder.binding.setUserServiceNames(userServiceNames);
         viewHolder.binding.setItemClickListener(this);
+        viewHolder.itemView.findViewById(R.id.notificationHeader).setBackground(userServiceColors.get(dataModel.getService_id()));
     }
 
     @Override
@@ -194,6 +199,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
                 return;
             }
             userServiceNames = mapServiceId2ServiceName(userServiceList);
+            userServiceColors = mapServiceId2ServiceColor(userServiceList);
             new GetMessagesTask().execute();
         } catch (Exception e) {
             if(showNetworkError){
@@ -210,6 +216,18 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     private Map<String, String> mapServiceId2ServiceName(List<UserService> userServiceList) {
         Map<String, String> map = new HashMap<>();
         userServiceList.stream().forEach(userService -> map.put(userService.getId(), userService.getCategory()));
+        return map;
+    }
+
+    /**
+     * Helper method mapping service id to service name.
+     * @param userServiceList The full list of services.
+     * @return A {@link Map} where key is service id and value is service name.
+     */
+    private Map<String, Drawable> mapServiceId2ServiceColor(List<UserService> userServiceList) {
+        Map<String, Drawable> map = new HashMap<>();
+        userServiceList.stream()
+                .forEach(userService -> map.put(userService.getId(), new ColorDrawable(Color.parseColor("#FF" + userService.getColor()))));
         return map;
     }
 

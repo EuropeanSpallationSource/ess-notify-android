@@ -14,18 +14,18 @@
         <!-- Customize your theme here. -->
         <item name="android:textColorHint">@android:color/white</item>
         <item name="colorAccent">@android:color/white</item>
-        <item name="android:checkboxStyle">@style/CustomCheckBox</item>
     </style>
+
     <style name="ThemeOverlay.AppTheme.TextInputEditText.Outlined" parent="">
         <item name="colorPrimary">@android:color/white</item>
     </style>
 
-    <style name="CustomRadioButton" parent="@android:style/Widget.CompoundButton.RadioButton">
-        <item name="android:button">@drawable/custom_radiobutton</item>
+    <style name="MyCheckbox" parent="@style/Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/custom_checkbox</item>
     </style>
 
-    <style name="CustomCheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">
-        <item name="android:button">@drawable/custom_checkbox</item>
+    <style name="CustomRadioButton" parent="@android:style/Widget.CompoundButton.RadioButton">
+        <item name="android:button">@drawable/custom_radiobutton</item>
     </style>
 
     <style name="AlertDialogCustom" parent="@android:style/Theme.Holo.Light.Dialog">

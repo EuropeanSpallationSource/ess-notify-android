@@ -51,6 +51,12 @@ public class MessagesFragment extends Fragment implements MessageRefreshCompleti
     }
 
     @Override
+    public void onResume(){
+        super.onResume();
+        messagesListAdapter.refresh(false);
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -105,5 +111,4 @@ public class MessagesFragment extends Fragment implements MessageRefreshCompleti
     public void messagesRefreshed(){
         swipeRefreshLayout.setRefreshing(false);
     }
-
 }

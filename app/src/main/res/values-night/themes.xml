@@ -13,4 +13,8 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="MyCheckbox" parent="@style/Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/custom_checkbox</item>
+    </style>
 </resources>

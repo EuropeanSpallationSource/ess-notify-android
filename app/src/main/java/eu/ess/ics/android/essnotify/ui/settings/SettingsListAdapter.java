@@ -19,6 +19,9 @@
 package eu.ess.ics.android.essnotify.ui.settings;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -110,9 +113,8 @@ public class SettingsListAdapter extends RecyclerView.Adapter<SettingsListAdapte
         UserService dataModel = filteredUserServices.get(position);
         viewHolder.bind(dataModel);
         viewHolder.binding.setItemClickListener(this);
-        // Color coding disabled. Not sure it's a good idea...
-        //Drawable drawable = new ColorDrawable(Color.parseColor("#FF" + dataModel.getColor()));
-        //viewHolder.itemView.setBackground(drawable);
+        Drawable drawable = new ColorDrawable(Color.parseColor("#FF" + dataModel.getColor()));
+        viewHolder.itemView.setBackground(drawable);
     }
 
     @Override
