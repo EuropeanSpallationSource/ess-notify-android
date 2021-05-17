@@ -67,8 +67,7 @@ public class PushMessageService extends FirebaseMessagingService {
         PendingIntent pendingIntent =
                 stackBuilder.getPendingIntent(
                         0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
+                        PendingIntent.FLAG_UPDATE_CURRENT);
 
         String groupId = "eu.ess.ics.android.essnotify";
 
@@ -100,7 +99,7 @@ public class PushMessageService extends FirebaseMessagingService {
 
         // Yes, this is actually needed! Looks like two separate notifications are dispatched.
         // Note in particular that the first uses a fixed notification id, while the second
-        // must increment a notification id. Is this documented by Google? Not really...
+        // must increment a notification id. Is this clearly documented by Google? No.
         notificationManager.notify( groupId, 1, groupBuilder.build());
         notificationManager.notify(++id, notificationBuilder.build());
 

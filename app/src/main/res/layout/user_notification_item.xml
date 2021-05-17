@@ -17,24 +17,9 @@
   ~  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <data>
-        <import type="android.view.View"/>
-        <import type="java.util.Map"/>
-        <import type="eu.ess.ics.android.essnotify.datamodel.UserNotification"/>
-        <variable
-            name="notification"
-            type="eu.ess.ics.android.essnotify.datamodel.UserNotification" />
-
-        <variable
-            name="itemClickListener"
-            type="eu.ess.ics.android.essnotify.ui.messages.MessageItemClickListener" />
-
-        <variable name="userServiceNames" type="Map&lt;String, String>" />
-
-    </data>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginBottom="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -122,13 +107,35 @@
                 android:id="@+id/bodyText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="3"
                 android:paddingTop="4dp"
                 android:paddingBottom="5dp"
-                android:maxLines="3"
                 android:text="@{notification.subtitle}"
                 android:textColor="@color/white" />
         </LinearLayout>
     </LinearLayout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="java.util.Map" />
+
+        <import type="eu.ess.ics.android.essnotify.datamodel.UserNotification" />
+
+        <variable
+            name="notification"
+            type="eu.ess.ics.android.essnotify.datamodel.UserNotification" />
+
+        <variable
+            name="itemClickListener"
+            type="eu.ess.ics.android.essnotify.ui.messages.MessageItemClickListener" />
+
+        <variable
+            name="userServiceNames"
+            type="Map&lt;String, String>" />
+
+    </data>
 
 
 </layout>

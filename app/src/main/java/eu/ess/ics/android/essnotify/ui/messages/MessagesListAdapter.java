@@ -74,7 +74,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
      */
     private List<UserNotification> filteredUserNotifications;
     private Context context;
-    private List<MessageRefreshCompletionListener> refreshCompleteionListeners
+    private final List<MessageRefreshCompletionListener> refreshCompleteionListeners
             = new ArrayList<>();
 
     private List<UserService> userServiceList;
@@ -294,10 +294,11 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         markAsRead(Arrays.asList(userNotification));
         TextView bodyText = view.findViewById(R.id.bodyText);
         userNotification.setExpanded(!userNotification.getExpanded());
+        bodyText.getLineCount();
         ObjectAnimator animation = ObjectAnimator.ofInt(
                 bodyText,
                 "maxLines",
-                userNotification.getExpanded() ? 100 : 3);
+                userNotification.getExpanded() ? 100 : 2);
         animation.setDuration(300);
         animation.start();
     }
