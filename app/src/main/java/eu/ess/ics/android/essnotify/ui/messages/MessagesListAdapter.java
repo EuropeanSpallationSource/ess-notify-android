@@ -227,7 +227,14 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     private Map<String, Drawable> mapServiceId2ServiceColor(List<UserService> userServiceList) {
         Map<String, Drawable> map = new HashMap<>();
         userServiceList.stream()
-                .forEach(userService -> map.put(userService.getId(), new ColorDrawable(Color.parseColor("#FF" + userService.getColor()))));
+                .forEach(userService -> {
+                    try {
+                        map.put(userService.getId(), new ColorDrawable(Color.parseColor("#FF" + userService.getColor())));
+                    } catch (Exception e) {
+                        // In case color on server is not a valid hexadecimal string...
+                        map.put(userService.getId(), new ColorDrawable(Color.parseColor("#FF000000")));
+                    }
+                });
         return map;
     }
 
