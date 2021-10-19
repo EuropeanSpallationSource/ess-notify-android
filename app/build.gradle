@@ -62,4 +62,11 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.commonmark/commonmark
     implementation group: 'org.commonmark', name: 'commonmark', version: '0.18.0'
+    // https://mvnrepository.com/artifact/org.commonmark/commonmark-ext-gfm-tables
+    implementation group: 'org.commonmark', name: 'commonmark-ext-gfm-tables', version: '0.18.0'
+    // https://mvnrepository.com/artifact/org.commonmark/commonmark-ext-image-attributes
+    implementation group: 'org.commonmark', name: 'commonmark-ext-image-attributes', version: '0.18.0'
+
+
+
 }
