@@ -60,7 +60,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@color/ess_light"
             android:onClick="@{(view) -> itemClickListener.messageClicked(view, notification)}"
             android:orientation="vertical"
@@ -110,7 +110,7 @@
                 android:maxLines="3"
                 android:paddingTop="4dp"
                 android:paddingBottom="5dp"
-                android:text="@{notification.subtitle}"
+                android:text="@{MessagesListAdapter.getHtml(notification.subtitle)}"
                 android:textColor="@color/white" />
         </LinearLayout>
     </LinearLayout>
@@ -118,24 +118,19 @@
     <data>
 
         <import type="android.view.View" />
-
         <import type="java.util.Map" />
-
         <import type="eu.ess.ics.android.essnotify.datamodel.UserNotification" />
+        <import type="eu.ess.ics.android.essnotify.ui.messages.MessagesListAdapter"/>
 
         <variable
             name="notification"
             type="eu.ess.ics.android.essnotify.datamodel.UserNotification" />
-
         <variable
             name="itemClickListener"
             type="eu.ess.ics.android.essnotify.ui.messages.MessageItemClickListener" />
-
         <variable
             name="userServiceNames"
             type="Map&lt;String, String>" />
 
     </data>
-
-
 </layout>

@@ -56,29 +56,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="24dp"
         android:background="@drawable/edittext_border"
         android:textColorHint="@android:color/white"
-        app:hintTextColor="@android:color/white"
         app:boxStrokeWidth="0dp"
         app:boxStrokeWidthFocused="0dp"
+        app:hintTextColor="@android:color/white"
         app:layout_constraintBottom_toTopOf="@+id/loginButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
 
         <com.google.android.material.textfield.TextInputEditText
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
             android:id="@+id/password"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:hint="@string/ess_password"
-            android:textSize="18dp"
             android:inputType="textPassword"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textSize="18dp"
+            android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -88,13 +88,14 @@
         android:layout_marginStart="120dp"
         android:layout_marginTop="40dp"
         android:layout_marginEnd="120dp"
-        android:layout_marginBottom="241dp"
+        android:layout_marginBottom="160dp"
         android:backgroundTint="@color/ess_light"
+        android:onClick="login"
         android:text="@string/login"
         android:textColor="@android:color/white"
-        android:onClick="login"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
 

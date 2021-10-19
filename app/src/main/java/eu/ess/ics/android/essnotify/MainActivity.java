@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        nMgr.cancelAll();
+
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
 
@@ -50,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Retrieves Firebase registration token and sends it to the ESS back-end service
-     * if the current token - saved in shared preferences - is null or different.
+     * Retrieves Firebase registration token and sends it to the ESS back-end service.
+     * If it has changed, the new value is persisted locally.
      */
     private void checkAndSendRegistrationToken() {
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
@@ -62,8 +65,10 @@ public class MainActivity extends AppCompatActivity {
                         getSharedPreferences(getString(R.string.ess_preferences), Context.MODE_PRIVATE);
                 String currentRegistrationToken =
                         sharedPref.getString(Constants.FIREBASE_REGISTRATION_TOKEN, null);
-                if (currentRegistrationToken == null || !registrationToken.equals(currentRegistrationToken)) {
-                    new SendRegistrationToken(MainActivity.this, registrationToken).execute();
+                new SendRegistrationToken(MainActivity.this, registrationToken).execute();
+                if (!registrationToken.equals(currentRegistrationToken)) {
+                    sharedPref.edit().putString(Constants.FIREBASE_REGISTRATION_TOKEN,
+                            registrationToken).commit();
                 }
             }
         });

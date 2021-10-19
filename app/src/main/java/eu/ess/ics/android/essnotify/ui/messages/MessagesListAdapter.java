@@ -19,6 +19,7 @@
 package eu.ess.ics.android.essnotify.ui.messages;
 
 import android.animation.ObjectAnimator;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -26,6 +27,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +38,9 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,6 +88,13 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     private Map<String, Drawable> userServiceColors;
 
     private String currentFilter;
+    private static Parser parser;
+    private static HtmlRenderer htmlRenderer;
+
+    static{
+        parser = Parser.builder().build();
+        htmlRenderer = HtmlRenderer.builder().build();
+    }
 
     public MessagesListAdapter() {
         // Instantiate with an empty list to avoid NPEs.
@@ -298,6 +311,8 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
      */
     @Override
     public void messageClicked(View view, UserNotification userNotification) {
+        NotificationManager nMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        nMgr.cancelAll();
         markAsRead(Arrays.asList(userNotification));
         TextView bodyText = view.findViewById(R.id.bodyText);
         userNotification.setExpanded(!userNotification.getExpanded());
@@ -395,5 +410,12 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     public void applyFilter(String filter) {
         currentFilter = filter;
         setNotifictions();
+    }
+
+    public static Spanned getHtml(String commonmarkString){
+        org.commonmark.node.Node document = parser.parse(commonmarkString);
+        String html = htmlRenderer.render(document);
+        Spanned spanned = Html.fromHtml(html, 0);
+        return spanned;
     }
 }
