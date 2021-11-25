@@ -29,6 +29,8 @@ public class UserService {
     private String id;
     private boolean is_subscribed;
 
+    private static final String COLOR_FORMAT = "^([0-9a-fA-F]{2}){3}$";
+
     public String getCategory() {
         return category;
     }
@@ -42,7 +44,12 @@ public class UserService {
     }
 
     public void setColor(String color) {
-        this.color = color;
+        if(!color.trim().matches(COLOR_FORMAT)){
+            this.color = "000000";
+        }
+        else{
+            this.color = color.trim();
+        }
     }
 
     public String getOwner() {
