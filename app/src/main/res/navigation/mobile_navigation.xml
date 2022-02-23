@@ -16,4 +16,10 @@
         android:name="eu.ess.ics.android.essnotify.ui.settings.SettingsFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_settings" />
+
+    <dialog
+        android:id="@+id/messageDetailsDialog"
+        android:name="eu.ess.ics.android.essnotify.ui.messages.MessageDetailsFragment"
+        android:label="Message Details"
+        tools:layout="@layout/fragment_message_details"/>
 </navigation>

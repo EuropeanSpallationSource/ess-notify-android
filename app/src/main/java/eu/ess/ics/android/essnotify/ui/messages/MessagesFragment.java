@@ -15,6 +15,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import eu.ess.ics.android.essnotify.R;
@@ -23,10 +26,10 @@ import eu.ess.ics.android.essnotify.pushmessaging.PushMessageService;
 
 public class MessagesFragment extends Fragment implements MessageRefreshCompletionListener{
 
+    private MessageDetailsViewModel messageDetailsViewModel;
     private FragmentMessagesBinding binding;
     private SwipeRefreshLayout swipeRefreshLayout;
     private MessagesListAdapter messagesListAdapter;
-
     /**
      * {@link BroadcastReceiver} handling broadcast when {@link eu.ess.ics.android.essnotify.pushmessaging.PushMessageService}
      * receives notification. The idea is to update the list of messages in response to notifications.
@@ -62,9 +65,15 @@ public class MessagesFragment extends Fragment implements MessageRefreshCompleti
 
         binding = FragmentMessagesBinding.inflate(getLayoutInflater());
 
-        messagesListAdapter = new MessagesListAdapter();
+        messagesListAdapter = new MessagesListAdapter(messageDetailsData -> {
+            messageDetailsViewModel.select(messageDetailsData);
+            NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+            navController.navigate(R.id.messageDetailsDialog);
+        });
+
         binding.setMessagesListAdapter(messagesListAdapter);
         messagesListAdapter.addRefreshCompletionListener(this);
+
         return binding.getRoot();
     }
 
@@ -105,10 +114,18 @@ public class MessagesFragment extends Fragment implements MessageRefreshCompleti
                     return false;
             }
         });
+
+        messageDetailsViewModel =
+                new ViewModelProvider(requireActivity()).get(MessageDetailsViewModel.class);
     }
 
     @Override
     public void messagesRefreshed(){
         swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @FunctionalInterface
+    public interface LaunchDetailView<Void, MessageDetailsData>{
+        public void launch(eu.ess.ics.android.essnotify.ui.messages.MessageDetailsData messageDetailsData);
     }
 }

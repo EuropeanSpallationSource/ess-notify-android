@@ -18,8 +18,6 @@
 
 package eu.ess.ics.android.essnotify.ui.messages;
 
-import android.animation.ObjectAnimator;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -32,7 +30,6 @@ import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
@@ -90,16 +87,19 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     private String currentFilter;
     private static Parser parser;
     private static HtmlRenderer htmlRenderer;
+    private RecyclerView recyclerView;
+    private MessagesFragment.LaunchDetailView launcher;
 
-    static{
+    static {
         parser = Parser.builder().build();
         htmlRenderer = HtmlRenderer.builder().build();
     }
 
-    public MessagesListAdapter() {
+    public MessagesListAdapter(MessagesFragment.LaunchDetailView launcher) {
         // Instantiate with an empty list to avoid NPEs.
         this.userNotifications = new ArrayList<>();
         this.filteredUserNotifications = userNotifications;
+        this.launcher = launcher;
     }
 
     public void addRefreshCompletionListener(MessageRefreshCompletionListener messageRefreshCompletionListener) {
@@ -119,6 +119,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
                 ItemTouchHelper(new SwipeToDeleteCallback(this));
         itemTouchHelper.attachToRecyclerView(recyclerView);
         refresh(true);
+        this.recyclerView = recyclerView;
     }
 
     public Context getContext() {
@@ -173,13 +174,14 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
 
     /**
      * Delete a single message, e.g. when user swipes left in the message list view.
+     *
      * @param position Position in the currently displayed message list.
      */
     public void deleteMessage(int position) {
         UserNotification userNotification = filteredUserNotifications.get(position);
         filteredUserNotifications.remove(position);
         notifyItemRemoved(position);
-        if(delete(Arrays.asList(userNotification))) {
+        if (delete(Arrays.asList(userNotification))) {
             refresh(false);
         }
     }
@@ -204,8 +206,8 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     public void refresh(boolean showNetworkError) {
         try {
             userServiceList = new GetSubscriptionsTask().execute(context).get();
-            if(userServiceList == null){
-                if(showNetworkError){
+            if (userServiceList == null) {
+                if (showNetworkError) {
                     BackendErrorHelper.showNetworkErrorDialog(context);
                 }
                 refreshCompleteionListeners.stream().forEach(MessageRefreshCompletionListener::messagesRefreshed);
@@ -215,7 +217,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
             userServiceColors = mapServiceId2ServiceColor(userServiceList);
             new GetMessagesTask().execute();
         } catch (Exception e) {
-            if(showNetworkError){
+            if (showNetworkError) {
                 BackendErrorHelper.showNetworkErrorDialog(context);
             }
         }
@@ -223,6 +225,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
 
     /**
      * Helper method mapping service id to service name.
+     *
      * @param userServiceList The full list of services.
      * @return A {@link Map} where key is service id and value is service name.
      */
@@ -234,6 +237,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
 
     /**
      * Helper method mapping service id to service name.
+     *
      * @param userServiceList The full list of services.
      * @return A {@link Map} where key is service id and value is service name.
      */
@@ -264,7 +268,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
             Call<List<UserNotification>> call = backendService.getNotifications();
             try {
                 Response<List<UserNotification>> response = call.execute();
-                if(response.code() == 401){
+                if (response.code() == 401) {
                     BackendErrorHelper.goToLogin(getContext());
                     return null;
                 }
@@ -292,6 +296,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
      * Handles click on link icon in message header. The view should display the link icon
      * only if there is a non-empty URL field ({@link UserNotification#getUrl()} in the message, so there is no need for
      * additional checks of the URL.
+     *
      * @param userNotification
      */
     @Override
@@ -306,23 +311,15 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
      * red dot next to title) and to toggle the text view size. By default the text view shows
      * 3 lines, but when toggled expands to at most 100 lines. This way a user may still read a longer
      * message and then collapse the text view when done.
+     *
      * @param view
      * @param userNotification
      */
     @Override
     public void messageClicked(View view, UserNotification userNotification) {
-        NotificationManager nMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        nMgr.cancelAll();
         markAsRead(Arrays.asList(userNotification));
-        TextView bodyText = view.findViewById(R.id.bodyText);
-        userNotification.setExpanded(!userNotification.getExpanded());
-        bodyText.getLineCount();
-        ObjectAnimator animation = ObjectAnimator.ofInt(
-                bodyText,
-                "maxLines",
-                userNotification.getExpanded() ? 100 : 2);
-        animation.setDuration(300);
-        animation.start();
+        launcher.launch(
+                new MessageDetailsData(userNotification, userServiceNames.get(userNotification.getService_id()), userServiceColors.get(userNotification.getService_id())));
     }
 
     /**
@@ -337,7 +334,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
             Call<Void> call = backendService.setNotifications(notifications[0]);
             try {
                 Response<Void> response = call.execute();
-                if(response.code() == 401){
+                if (response.code() == 401) {
                     BackendErrorHelper.goToLogin(context);
                 }
                 return true;
@@ -349,6 +346,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
 
     /**
      * Deletes messages on the remote service, i.e. sends status "deleted".
+     *
      * @param userNotifications
      * @return
      */
@@ -359,7 +357,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         boolean deleteOk = false;
         try {
             deleteOk = new SetMessagesTask().execute(notifications).get();
-            if(!deleteOk){
+            if (!deleteOk) {
                 BackendErrorHelper.showNetworkErrorDialog(context);
             }
         } catch (Exception e) {
@@ -385,8 +383,8 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         }
     }
 
-    private void filter(){
-        if(currentFilter.isEmpty() || currentFilter.equals(getContext().getResources().getString(R.string.all))){
+    private void filter() {
+        if (currentFilter.isEmpty() || currentFilter.equals(getContext().getResources().getString(R.string.all))) {
             filteredUserNotifications = userNotifications;
             return;
         }
@@ -396,9 +394,9 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
     }
 
 
-    public void showFilterDialog(FragmentManager fragmentManager){
+    public void showFilterDialog(FragmentManager fragmentManager) {
         // userServiceList may be null if app was launched when off-line
-        if(userServiceList == null || userServiceList.isEmpty()){
+        if (userServiceList == null || userServiceList.isEmpty()) {
             return;
         }
         List<UserService> currentSubscriptions =
@@ -412,7 +410,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         setNotifictions();
     }
 
-    public static Spanned getHtml(String commonmarkString){
+    public static Spanned getHtml(String commonmarkString) {
         org.commonmark.node.Node document = parser.parse(commonmarkString);
         String html = htmlRenderer.render(document);
         Spanned spanned = Html.fromHtml(html, 0);
